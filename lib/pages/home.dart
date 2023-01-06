@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
         image: AssetImage('assets/images/image1.png'),
         fit: BoxFit.cover,
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: false,
           backgroundColor: GlobalColors.bluecolor,
           centerTitle: true,
-          title: Image(
+          title: const Image(
             image: AssetImage('assets/logos/jojoblancorange.png'),
             height: 50,
           ),

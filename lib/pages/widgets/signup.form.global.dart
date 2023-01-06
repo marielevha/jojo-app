@@ -37,7 +37,7 @@ class _SignupFormGlobalState extends State<SignupFormGlobal> {
           border: InputBorder.none,
           contentPadding:const EdgeInsets.all(0),
           hintStyle: GoogleFonts.poppins(
-              textStyle: TextStyle(
+              textStyle: const TextStyle(
                 height: 1
               )
             )

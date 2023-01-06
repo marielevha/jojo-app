@@ -1,24 +1,52 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jojo/models/user/user.dart';
 import 'package:jojo/pages/inscription.dart';
 import 'package:jojo/pages/home.dart';
 import 'package:jojo/pages/widgets/signup.form.global.dart';
+import 'package:jojo/services/api/user.api.dart';
+import 'package:jojo/utils/constants.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
+import 'package:jojo/utils/locator.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMixin {
+  final UserApi userApi = locator<UserApi>();
+  //final DocumentApi documentApi = locator<DocumentApi>();
+  bool isLogin = true;
+  bool isLoading = false;
+  late Animation<double> containerSize;
+  late AnimationController _animationController;
+  
+  Duration animationDuration = const Duration(milliseconds: 270);
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this, duration: animationDuration);
+
+    emailController.text = 'jessica@jojo.com';
+    passwordController.text = 'password';
+
+  }
+  
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +64,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  child: Image(
+                  child: const Image(
                     image: AssetImage('assets/logos/sloganblancorange.png'),
                     height: 100,
                   ),
@@ -49,7 +77,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     Text('Connectez-vous',
                         style: GoogleFonts.poppins(
-                            textStyle: TextStyle(
+                          textStyle: TextStyle(
                           color: GlobalColors.Whitecolor,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -98,22 +126,23 @@ class _LoginViewState extends State<LoginView> {
                         width: 250,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return HomePage();
-                            }));
-                          },
                           style: ElevatedButton.styleFrom(
                             primary: GlobalColors.Orangecolor,
                           ),
+                          onPressed: isLoading ? null : () async {
+                            login();
+                            /*Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const HomePage();
+                                }));*/
+                          },
                           child: Text("CONNEXION",
-                              style: GoogleFonts.poppins(
-                                  textStyle: TextStyle(
-                                color: GlobalColors.Whitecolor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ))),
+                            style: GoogleFonts.poppins(
+                              textStyle: TextStyle(
+                              color: GlobalColors.Whitecolor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ))),
                         ),
                       ),
                       const SizedBox(
@@ -126,7 +155,7 @@ class _LoginViewState extends State<LoginView> {
                             onPressed: () {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
-                                return Inscription();
+                                return const Inscription();
                               }));
                             },
                             style: OutlinedButton.styleFrom(
@@ -150,7 +179,7 @@ class _LoginViewState extends State<LoginView> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return HomePage();
+                              return const HomePage();
                             }));
                           },
                           style: ElevatedButton.styleFrom(
@@ -186,7 +215,9 @@ class _LoginViewState extends State<LoginView> {
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline,
                                 color: Colors.amber,
-                                fontSize: 12)),
+                                fontSize: 12
+                            )
+                        ),
                         TextSpan(
                             text: ' et les',
                             style: TextStyle(
@@ -201,9 +232,11 @@ class _LoginViewState extends State<LoginView> {
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline,
                                 color: Colors.amber,
-                                fontSize: 12)),
+                                fontSize: 12
+                            )
+                        ),
                         TextSpan(
-                            text: ' et jai lu la',
+                            text: ' et j\'ai lu la',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -237,5 +270,49 @@ class _LoginViewState extends State<LoginView> {
         )
       ),*/
         );
+  }
+  
+  Future<void> login() async {
+    var isConnected = await checkInternetAccess();
+    //if (validate()) {
+      if(isConnected) {
+        setState(() {
+          isLoading = true;
+        });
+        User user = User.init();
+        user.email = emailController.text;
+        user.password = passwordController.text;
+
+        try {
+          user = await userApi.login(user: user);
+          if (user.accessToken != '' || user.accessToken != null) {
+            setState(() {
+              currentToken = user.accessToken;
+              isLoading = false;
+            });
+
+            //Navigate to home
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) { return const HomePage(); })
+            );
+          }
+        }
+        catch (err) {
+          setState(() {
+            isLoading = false;
+          });
+          printError(err);
+        }
+      }
+      else {
+        /*showToast(
+          fToast: _fToast,
+          message: NOT_INTERNET_ACCESS_MESSAGE,
+          color: Colors.yellow,
+          duration: 5,
+        );*/
+      }
+    //}
   }
 }

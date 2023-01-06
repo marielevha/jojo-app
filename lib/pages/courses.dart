@@ -1,9 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jojo/pages/detail.dart';
+import 'package:jojo/models/delivery/delivery.dart';
+import 'package:jojo/pages/widgets/display.dart';
+import 'package:jojo/services/api/delivery.api.dart';
+import 'package:jojo/services/delivery/delivery-view-model.dart';
 import 'package:jojo/utils/global.colors.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:jojo/utils/locator.dart';
+import 'package:stacked/stacked.dart';
+import 'package:jojo/utils/functions.dart';
 
 
 class MesCourses extends StatefulWidget {
@@ -14,6 +20,41 @@ class MesCourses extends StatefulWidget {
 }
 
 class _MesCoursesState extends State<MesCourses> {
+
+  final ScrollController _scrollController = ScrollController();
+  final ScrollController __scrollController = ScrollController();
+  final DeliveryApi deliveryApi = locator<DeliveryApi>();
+  late bool isLoading = false;
+  late int currentPage = 1;
+  final DeliveryViewModel _viewModel = DeliveryViewModel();
+  late List<Delivery> _deliveries = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadDeliveries(currentPage);
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !isLoading) {
+        currentPage++;
+        loadDeliveries(currentPage);
+      }
+    });
+    __scrollController.addListener(() {
+      if (__scrollController.position.pixels >= __scrollController.position.maxScrollExtent && !isLoading) {
+        currentPage++;
+        loadDeliveries(currentPage);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+    __scrollController.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,232 +64,67 @@ class _MesCoursesState extends State<MesCourses> {
         excludeHeaderSemantics: true,
         title: Text('Mes courses',style: GoogleFonts.poppins(),)
       ),
-      body: Container(
-        color: GlobalColors.Whitecolor,
-        padding: const EdgeInsets.all(4.0),
-        child: ListView(
-          children: [
-            ListTile(
-              onTap: (){
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context) {
-                    return DetailPage();
-                }));
-              },
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 1.0,
-                  color: Colors.grey.shade300
-                )
-              ),
-              leading: IconButton(
-                icon: Icon(FontAwesomeIcons.truckFast,
-                          color: GlobalColors.Orangecolor,),
-                onPressed: (){},
-              ),
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                    Text(
-                    "31/12/2022 (19:50)",
-                    style: GoogleFonts.poppins(
-                        textStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,)),
-                    ),
-                   Text(
-                    "Déménagement / transport de biens personnels",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        color: GlobalColors.Orangecolor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                  ),
-                  Text(
-                  "course N° 123456789",
-                  style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic)),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "De Abidjan yopougon",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                  ),
-                  Text(
-                    "A Abidjan abobo",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "le 01/01/2023",
-                        style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                      ),
-                      SizedBox(
-                        width: 3,
-                      ),
-                      Text(
-                        "à 8h00",
-                        style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    alignment: Alignment.bottomRight,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                        "En cours...",
-                        style: GoogleFonts.poppins(
-                            textStyle: TextStyle(
-                                color: GlobalColors.Orangecolor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  SizedBox(
-                    height: 10,
-                  )
-                ],
-              ),
-            ),
+      body: RefreshIndicator(
+        onRefresh: () {
+          loadDeliveries(1);
+          Completer<void> completer = Completer<void>();
+          Timer timer = Timer(const Duration(seconds: 1), () {
+            completer.complete();
+          });
+          return completer.future;
+        },
+        child: SingleChildScrollView(
+          controller: __scrollController,
+          child: Column(
+            children: [
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      controller: _scrollController,
+                      child: ViewModelBuilder<DeliveryViewModel>.reactive(
+                          viewModelBuilder: () => DeliveryViewModel(),
+                          onModelReady: (model) => model.findDeliveriesByUserId(page: 1,),
+                          builder: (context, model, child) {
+                            if(!model.testFindDeliveries && !isLoading) {
 
-
-            ListTile(
-              onTap: (){},
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 1.0,
-                  color: Colors.grey.shade300
-                )
-              ),
-              leading: IconButton(
-                icon: Icon(FontAwesomeIcons.truckFast,
-                          color: GlobalColors.Orangecolor,),
-                onPressed: (){},
-              ),
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text(
-                    "Déménagement / transport de biens personnels",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        color: GlobalColors.Orangecolor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                  ),
-                  Text(
-                  "course N° 123456789",
-                  style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic)),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "De Abidjan yopougon",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                  ),
-                  Text(
-                    "A Abidjan abobo",
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "le 01/01/2023",
-                        style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
-                    ),
+                              if(model.deliveriesList.isNotEmpty || _deliveries.isNotEmpty) {
+                                return DisplayDoc(
+                                  deliveries: _deliveries.isEmpty ? model.deliveriesList.toList() : _deliveries
+                                );
+                              }
+                              else {
+                                return Container();
+                              }
+                            }
+                            return Center(child: Image.asset('assets/images/ripple.gif'),);
+                          }
                       ),
-                      SizedBox(
-                        width: 3,
-                      ),
-                      Text(
-                        "à 8h00",
-                        style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w300
-                      )
                     ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    alignment: Alignment.bottomRight,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                        "Terminé",
-                        style: GoogleFonts.poppins(
-                            textStyle: TextStyle(
-                                color: Colors.green,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  SizedBox(
-                    height: 10,
-                  )
-                ],
+                  ],
+                ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void loadDeliveries(int page) async {
+    try {
+      isLoading = true;
+      await _viewModel.findDeliveriesByUserId(page: page);
+      setState(() {
+        _deliveries = _viewModel.deliveriesList;
+        isLoading = false;
+        printWarning("List 1: ${_deliveries.length}");
+      });
+    }
+    catch (_) {
+      isLoading = false;
+    }
   }
 }

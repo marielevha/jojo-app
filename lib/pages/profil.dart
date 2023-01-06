@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jojo/models/user/user.dart';
 import 'package:jojo/pages/courses.dart';
+import 'package:jojo/pages/editprofil.dart';
 import 'package:jojo/pages/login.dart';
+import 'package:jojo/services/api/user.api.dart';
+import 'package:jojo/utils/constants.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
+import 'package:jojo/utils/locator.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -18,6 +23,23 @@ class Profil extends StatefulWidget {
 }
 
 class _ProfilState extends State<Profil> {
+
+  //Init user api
+  final UserApi userApi = locator<UserApi>();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    printWarning('InitState');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    printWarning('Dispose');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,19 +57,19 @@ class _ProfilState extends State<Profil> {
             child: Column(
               children: [
                 Text(
-                  "Nom et prenom de l'utilisateur",
+                  currentUser != null ? currentUser.name : appDefaultUserName,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 30,
                           fontWeight: FontWeight.bold)),
                 ),
                 Text(
-                  "email de l'utilisateur",
+                  currentUser != null ? currentUser.email : appEmail,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                           color: Colors.grey,
                           fontSize: 13,
                           fontStyle: FontStyle.italic)),
@@ -56,7 +78,18 @@ class _ProfilState extends State<Profil> {
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var result = await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                        return EditProfil();
+                      }));
+
+                      if (result != null) {
+                        setState(() {
+                          currentUser = result;
+                        });
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(300)),
@@ -121,10 +154,14 @@ class _ProfilState extends State<Profil> {
                   title: "Deconnexion",
                   icons: LineAwesomeIcons.alternate_sign_out,
                   onPress: () {
-                    Navigator.push(context,
+                    setState(() {
+                      isLoading = !isLoading;
+                    });
+                    logout(context);
+                    /*Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return LoginView();
-                    }));
+                    }));*/
                   },
                   textColor: Colors.red,
                 ),
@@ -132,6 +169,34 @@ class _ProfilState extends State<Profil> {
             )),
       ),
     );
+  }
+
+  //Logout function
+  void logout(context) async {
+    try {
+      int code = await userApi.logout();
+      if (code == 200) {
+        setState(() {
+          isLoading = !isLoading;
+        });
+
+        //Navigate to login
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) { return const LoginView(); })
+        );
+      }
+    }
+    catch (err) {
+      /*showToast(
+        fToast: _fToast,
+        message: GLOBAL_ERROR_MESSAGE,
+        color: DANGER_COLOR,
+        duration: 3,
+      );*/
+      printError(err);
+    }
+
   }
 }
 
