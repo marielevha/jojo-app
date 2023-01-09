@@ -29,3 +29,5 @@ const hiveDeliveryTableName = 'deliveries';
 
 const routeLogin = 'login';
 const routeHome = 'home';
+
+const defaultProfile = 'viewer';

@@ -21,6 +21,8 @@ class User {
   late String lastName;
   @HiveField(8)
   late String country;
+  @HiveField(9)
+  late String profile;
 
   //User(this.id, this.name, this.phone, this.email, this.password, this.accessToken);
 
@@ -34,6 +36,7 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.country,
+    required this.profile,
   });
 
   User.init();
@@ -60,24 +63,8 @@ class User {
       accessToken: json['token'],
       phone: json['phone'],
       country: json['country'],
-      password: ''
-    );
-  }
-}
-
-class LoginResponse {
-  late String accessToken;
-  late User user;
-
-  LoginResponse({
-    required this.user,
-    required this.accessToken
-  });
-
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
-      user: User.fromJson(json['user']),
-      accessToken: json['access_token']
+      password: '',
+      profile: json['profile'],
     );
   }
 }

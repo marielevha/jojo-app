@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+import 'package:jojo/models/response/login.response.dart';
+import 'package:jojo/models/response/register.response.dart';
 import 'package:jojo/utils/constants.dart';
 import 'package:jojo/utils//functions.dart';
 import 'package:jojo/utils/locator.dart';
@@ -27,14 +29,14 @@ class UserApi {
 
     if (response.statusCode == 200) {
       var respStr = await response.stream.bytesToString();
-      LoginResponse loinResponse = LoginResponse.fromJson(jsonDecode(respStr));
+      LoginResponse loginResponse = LoginResponse.fromJson(jsonDecode(respStr));
 
       //Open User Box && Add user to box
       final userBox = await Hive.openBox(hiveUserTableName);
-      await userBox.add(loinResponse.user);
+      await userBox.add(loginResponse.user);
 
       //Add info user to constant CURRENT_USER
-      currentUser = loinResponse.user;
+      currentUser = loginResponse.user;
 
       return currentUser;
     }
@@ -43,23 +45,25 @@ class UserApi {
     }
   }
 
-  register({required User user, @required series}) async {
+  register({required User user}) async {
     String url = '$apiBaseUrl/auth/register';
 
     var request = http.MultipartRequest('POST', Uri.parse(url))
-      ..fields['name'] = user.name
-      ..fields['number'] = user.phone
+      ..fields['first_name'] = user.firstName
+      ..fields['last_name'] = user.lastName
+      ..fields['profile'] = user.profile
+      ..fields['phone'] = user.phone
+      ..fields['country'] = user.country
       ..fields['email'] = user.email
-      ..fields['series'] = series
       ..fields['password'] = user.password
       ..fields['password_confirmation'] = user.password;
 
     var response = await request.send();
+    printWarning(response.statusCode);
     if (response.statusCode == 201) {
       var respStr = await response.stream.bytesToString();
-
-      User user = User.fromJson(jsonDecode(respStr));
-      return user;
+      RegisterResponse registerResponse = RegisterResponse.fromJson(jsonDecode(respStr));
+      return registerResponse.user;
     }
     else {
       throw response;
