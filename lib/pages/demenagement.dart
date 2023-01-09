@@ -560,8 +560,7 @@ late int selectedIndex = 0;
           formDetails.typeVoiture = _typeDeVoiture.text;
           formDetails.nomPrenom =  _nomPrenom;
           formDetails.numero = _numero;
-          print(
-              'Details du formulaire de demenagement et transport de bien public');
+          print('Details du formulaire de demenagement et transport de bien public');
           print("Lieu d'enlevement: " + _lieuDepart);
           print("Lieu de destination: " + _lieuDestination);
           print("Date: " + _date.text);
