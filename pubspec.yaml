@@ -37,6 +37,11 @@ dependencies:
   fluttertoast: ^8.1.2
   stacked: ^3.0.1
   stacked_services: ^0.9.8
+  flutter_google_places: ^0.3.0
+  geolocator: ^9.0.2
+  google_maps_flutter: ^2.2.3
+  awesome_snackbar_content: ^0.1.0
+  geocoding: ^2.0.5
 
 dev_dependencies:
   build_runner: ^2.3.3

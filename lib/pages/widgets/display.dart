@@ -40,7 +40,7 @@ class _DisplayDocState extends State<DisplayDoc> {
             onTap: (){
               Navigator.push(context,
                 MaterialPageRoute(builder: (context) {
-                  return DetailPage();
+                  return DetailPage(delivery: delivery);
                 }));
             },
             shape: RoundedRectangleBorder(
@@ -59,7 +59,7 @@ class _DisplayDocState extends State<DisplayDoc> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "31/12/2022 (19:50)",
+                  "${delivery.departDate} (${delivery.departHour})",
                   style: GoogleFonts.poppins(
                       textStyle: TextStyle(
                         color: Colors.grey,
@@ -88,7 +88,7 @@ class _DisplayDocState extends State<DisplayDoc> {
                 ),
                 const SizedBox(height: 5,),
                 Text(
-                  "De Abidjan yopougon",
+                  "De ${delivery.departCity}",
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                       fontWeight: FontWeight.w300
@@ -96,7 +96,7 @@ class _DisplayDocState extends State<DisplayDoc> {
                   ),
                 ),
                 Text(
-                  "A Abidjan abobo",
+                  "A ${delivery.destinationCity}",
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                       fontWeight: FontWeight.w300
@@ -106,7 +106,7 @@ class _DisplayDocState extends State<DisplayDoc> {
                 Row(
                   children: [
                     Text(
-                      "le 01/01/2023",
+                      "le ${delivery.destinationDate}",
                       style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w300
@@ -115,7 +115,7 @@ class _DisplayDocState extends State<DisplayDoc> {
                     ),
                     const SizedBox(width: 3,),
                     Text(
-                      "à 8h00",
+                      "à ${delivery.destinationHour}",
                       style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w300

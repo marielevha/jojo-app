@@ -23,6 +23,7 @@ class DeliveryViewModel extends BaseViewModel {
         _testFindDeliveries = true;
         setBusy(true);
         _deliveriesList = await deliveryApi.findDeliveriesByUserId(id: currentUser.id, page: page);
+        printError("IS");
 
         var clearResult = await hiveService.clearBox(boxName: hiveDeliveryTableName);
         printWarning('CLEAR BOX : $clearResult');
@@ -33,6 +34,8 @@ class DeliveryViewModel extends BaseViewModel {
       }
     }
     catch(_) {
+      printError("NOT");
+      printError(_.toString());
       _testFindDeliveries = false;
       bool exists = await hiveService.isExists(boxName: hiveDeliveryTableName);
       if (exists) {

@@ -30,6 +30,7 @@ class DeliveryApi {
     url = '${url}page=$page&';
     url = '${url}size=$size';
     printWarning(url);
+    printWarning(currentUser.accessToken);
 
     var headers = {
       "Accept": "application/json",
@@ -45,13 +46,18 @@ class DeliveryApi {
         }
         throw Exception('Failed to load');
       }
+      //printWarning(json.decode(response.body)['data']);
+      printError("Before");
       List<Delivery> deliveries = (json.decode(response.body)['data'] as List)
           .map((delivery) => Delivery.fromJson(delivery))
           .toList();
+      printError("After");
       favoriteRemote = true;
       return deliveries;
     }
     on SocketException catch (_) {
+      printError(_.message);
+      printError("Except");
       favoriteRemote = false;
       throw Exception('Failed to load');
     }

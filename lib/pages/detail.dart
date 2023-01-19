@@ -2,16 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jojo/models/delivery/delivery.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  const DetailPage({super.key, required this.delivery});
+  final Delivery delivery;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
+  late Delivery delivery;
+  @override
+  void initState() {
+    super.initState();
+    delivery = widget.delivery;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +29,7 @@ class _DetailPageState extends State<DetailPage> {
           centerTitle: true,
           excludeHeaderSemantics: true,
           title: Text(
-            'course N° 123456789',
+            'course N° ${delivery.code}',
             style: GoogleFonts.poppins(),
           )),
       body: ListView(
@@ -31,7 +40,7 @@ class _DetailPageState extends State<DetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Déménagement / transport de biens personnels",
+                "${delivery.transactionType}",
                 style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                         color: GlobalColors.Orangecolor,
@@ -39,7 +48,7 @@ class _DetailPageState extends State<DetailPage> {
                         fontWeight: FontWeight.bold)),
               ),
               Text(
-                "course N° 123456789",
+                "course N° ${delivery.code}",
                 style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                         color: Colors.grey,
@@ -61,7 +70,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "Abidjan yopougon",
+                    "${delivery.departCity}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -83,7 +92,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "non",
+                    "${delivery.stopCity}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -105,7 +114,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "Abidjan abobo",
+                    "${delivery.destinationCity}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -129,7 +138,7 @@ class _DetailPageState extends State<DetailPage> {
                         width: 5,
                       ),
                       Text(
-                        "01/01/2023",
+                        "${delivery.destinationDate}",
                         style: GoogleFonts.poppins(
                             textStyle: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w300)),
@@ -151,7 +160,7 @@ class _DetailPageState extends State<DetailPage> {
                         width: 5,
                       ),
                       Text(
-                        "08h00",
+                        "${delivery.destinationHour}",
                         style: GoogleFonts.poppins(
                             textStyle: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w300)),
@@ -175,7 +184,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "1",
+                    "${delivery.carNumber}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -197,7 +206,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "1",
+                    "${delivery.routeNumber}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -219,7 +228,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "petit",
+                    "${delivery.carType}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -250,7 +259,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "Lamine Mohamed",
+                    delivery.contactName,
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -269,7 +278,7 @@ class _DetailPageState extends State<DetailPage> {
                     width: 5,
                   ),
                   Text(
-                    "0786543499",
+                    delivery.contactPhone,
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w300)),
@@ -280,7 +289,7 @@ class _DetailPageState extends State<DetailPage> {
                 height: 20,
               ),
               Text(
-                "En cours...",
+                buildStatus(delivery.status),
                 style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                         color: GlobalColors.Orangecolor,

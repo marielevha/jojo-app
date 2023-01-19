@@ -120,8 +120,12 @@ class _MesCoursesState extends State<MesCourses> {
       setState(() {
         _deliveries = _viewModel.deliveriesList;
         isLoading = false;
-        printWarning("List 1: ${_deliveries.length}");
+        printWarning("List 1: ${_viewModel.deliveriesList.length}");
       });
+
+      /*_deliveries.forEach((el) {
+        printWarning("Delivery: ${el.code}, ${el.departLng}, ${el.destinationLng}, ${el.stopLng}");
+      });*/
     }
     catch (_) {
       isLoading = false;

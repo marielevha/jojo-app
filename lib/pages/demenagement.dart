@@ -1,9 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:jojo/models/delivery/delivery.dart';
 import 'package:jojo/pages/home.dart';
+import 'package:jojo/pages/maps/location.screen.dart';
 import 'package:jojo/pages/widgets/form.validate.dart';
+import 'package:jojo/utils/constants.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +33,15 @@ class Voiture {
 }
 
 class _DemenagementState extends State<Demenagement> {
+
+  Delivery delivery = Delivery.init();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController lieuDepartController = TextEditingController();
+  final TextEditingController lieuStopController = TextEditingController();
+  final TextEditingController lieuDestinationController = TextEditingController();
+
+
   @override
   void initState() {
     super.initState();
@@ -39,13 +55,42 @@ class _DemenagementState extends State<Demenagement> {
   late final String _lieuDepart;
   Widget _buildLieuDepart() {
     return TextFormField(
-      decoration: const InputDecoration(
-          suffixIcon: Icon(
-            FontAwesomeIcons.mapLocation,
-            color: Colors.blue,
-            size: 15,
-          ),
-          labelText: "Lieu d'enlevement"),
+      controller: lieuDepartController,
+      decoration: InputDecoration(
+        suffixIcon: IconButton(
+          onPressed: () async {
+            //Open map
+            printWarning("Open map depart");
+            var location = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+            );
+            if(location != null) {
+              location as LatLng;
+              delivery.departLat = location.latitude.toString();
+              delivery.departLng = location.longitude.toString();
+
+              Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
+
+              setState(() {
+                lieuDepartController.text = "${placeMark.street!}, ${placeMark.locality!}";
+                _lieuDepart = lieuDepartController.text;
+              });
+
+              printWarning("Lieu depart: $_lieuDepart");
+              //printWarning("Address: ${placeMark.street!} | ${placeMark.locality!}");
+
+
+            }
+          },
+          icon: const Icon(
+              FontAwesomeIcons.mapLocation,
+              color: Colors.blue,
+              size: 15,
+            )
+        ),
+        labelText: "Lieu d'enlevement"
+      ),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de depart est vide';
@@ -67,11 +112,36 @@ class _DemenagementState extends State<Demenagement> {
   late final String _lieuDestination;
   Widget _buildLieuDestination() {
     return TextFormField(
-      decoration: const InputDecoration(
-          suffixIcon: Icon(
-            FontAwesomeIcons.mapLocation,
-            color: Colors.blue,
-            size: 15,
+      controller: lieuDestinationController,
+      decoration: InputDecoration(
+          suffixIcon: IconButton(
+              onPressed: () async {
+                //Open map
+                printWarning("Open map destination");
+                var location = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+                );
+                if(location != null) {
+                  location as LatLng;
+                  delivery.destinationLat = location.latitude.toString();
+                  delivery.destinationLng = location.longitude.toString();
+
+                  Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
+
+                  setState(() {
+                    lieuDestinationController.text = "${placeMark.street!}, ${placeMark.locality!}";
+                    _lieuDestination = lieuDestinationController.text;
+                  });
+
+                  printWarning("Lieu destination: $_lieuDestination");
+                }
+              },
+              icon: const Icon(
+                FontAwesomeIcons.mapLocation,
+                color: Colors.blue,
+                size: 15,
+              )
           ),
           labelText: 'Lieu de destination'),
       validator: (String? value) {
@@ -113,7 +183,8 @@ class _DemenagementState extends State<Demenagement> {
             lastDate: DateTime(2100),
           );
           if (pickedDate != null) {
-            String formatDate = DateFormat("dd-MM-yyyy").format(pickedDate);
+            String formatDate = DateFormat("dd/MM/yyyy").format(pickedDate);
+            //printWarning("Date ${formatDate.toString()}");
             setState(() {
               _date.text = formatDate.toString();
             });
@@ -151,6 +222,7 @@ class _DemenagementState extends State<Demenagement> {
           if (pickedTime != null) {
             String formatTime =
                 '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+            //printWarning("Date ${formatTime.toString()}");
             setState(() {
               _heure.text = formatTime;
             });
@@ -236,11 +308,36 @@ class _DemenagementState extends State<Demenagement> {
   late final String _lieuArret;
   Widget _buildLieuArret() {
     return TextFormField(
-      decoration: const InputDecoration(
-          suffixIcon: Icon(
-            FontAwesomeIcons.mapLocation,
-            color: Colors.blue,
-            size: 15,
+      controller: lieuStopController,
+      decoration: InputDecoration(
+          suffixIcon: IconButton(
+              onPressed: () async {
+                //Open map
+                printWarning("Open map stop");
+                var location = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+                );
+                if(location != null) {
+                  location as LatLng;
+                  delivery.stopLat = location.latitude.toString();
+                  delivery.stopLng = location.longitude.toString();
+
+                  Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
+
+                  setState(() {
+                    lieuStopController.text = "${placeMark.street!}, ${placeMark.locality!}";
+                    _lieuArret = lieuStopController.text;
+                  });
+
+                  printWarning("Lieu stop: $_lieuArret");
+                }
+              },
+              icon: const Icon(
+                FontAwesomeIcons.mapLocation,
+                color: Colors.blue,
+                size: 15,
+              )
           ),
           labelText: "Ajouter un stop en cours de trajet"),
       onSaved: (String? arret) {
@@ -385,10 +482,13 @@ late int selectedIndex = 0;
               style: TextStyle(color: Colors.grey, fontSize: 20),
             ),
         TextFormField(
-          decoration: InputDecoration(hintText: 'Nom & prenoms', hintStyle: GoogleFonts.poppins(),),
+          decoration: InputDecoration(
+            hintText: /*currentUser != null ? currentUser.name :*/ 'Nom & prenoms',
+            hintStyle: GoogleFonts.poppins(),
+          ),
           validator: (String? nom) {
             if (nom!.isEmpty) {
-            return 'le champ est vide';
+              return 'le champ est vide';
             }
             return null;
           },
@@ -458,55 +558,35 @@ late int selectedIndex = 0;
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    height: 35,
-                  ),
+                  const SizedBox(height: 35,),
                   _buildLieuDepart(),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  const SizedBox(height: 25,),
                   _buildLieuDestination(),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  const SizedBox(height: 25,),
                   Row(
                     children: <Widget>[
                       _buildDate(),
-                      SizedBox(
-                        width: 50,
-                      ),
+                      const SizedBox(width: 50,),
                       _buildHeure()
                     ],
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  const SizedBox(height: 25,),
                   Row(
                     children: <Widget>[
                      _buildNbreVehicule(),
-                      SizedBox(
-                        width: 50,
-                      ),
+                      const SizedBox(width: 50,),
                       _buildTrajet(),
                     ],
                   ),
-                  
-                  SizedBox(
-                    height: 25,
-                  ),
+
+                  const SizedBox(height: 25,),
                   _buildLieuArret(),
-                   SizedBox(
-                    height: 35,
-                  ),
+                  const SizedBox(height: 35,),
                   _buildTypeVehicule(),
-                  SizedBox(
-                    height: 50,
-                  ),
+                  const SizedBox(height: 50,),
                   _buildPersonContact(),
                   _buildNumero(),
-                  SizedBox(
-                    height: 70,
-                  ),
+                  const SizedBox(height: 70,),
                   Container(
                     alignment: Alignment.center,
                     child: SizedBox(
@@ -530,9 +610,7 @@ late int selectedIndex = 0;
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10,),
                 ],
               ),
             ),
@@ -560,17 +638,17 @@ late int selectedIndex = 0;
           formDetails.typeVoiture = _typeDeVoiture.text;
           formDetails.nomPrenom =  _nomPrenom;
           formDetails.numero = _numero;
-          print('Details du formulaire de demenagement et transport de bien public');
-          print("Lieu d'enlevement: " + _lieuDepart);
-          print("Lieu de destination: " + _lieuDestination);
-          print("Date: " + _date.text);
-          print("Heure: " + _heure.text);
-          print('Nombre de vehicule: ' '$_valueVehicule');
-          print('Nombre de trajet: ' '$_valueTrajet');
-          print("Lieu d'arret: " + _lieuArret);
-          print("Type de camion: " + _typeDeVoiture.text);
-          print("Personne à contacter: " + _nomPrenom);
-          print("Numero de tel: " + _numero);
+          printWarning('Details du formulaire de demenagement et transport de bien public');
+          printWarning("Lieu d'enlevement: " + _lieuDepart);
+          printWarning("Lieu de destination: " + _lieuDestination);
+          printWarning("Date: " + _date.text);
+          printWarning("Heure: " + _heure.text);
+          printWarning('Nombre de vehicule: ' '$_valueVehicule');
+          printWarning('Nombre de trajet: ' '$_valueTrajet');
+          printWarning("Lieu d'arret: " + _lieuArret);
+          printWarning("Type de camion: " + _typeDeVoiture.text);
+          printWarning("Personne à contacter: " + _nomPrenom);
+          printWarning("Numero de tel: " + _numero);
           /*showDialog(
             context: context, 
             builder: (context) => FutureProgressDialog(
@@ -591,11 +669,11 @@ late int selectedIndex = 0;
               content: Stack(
                 clipBehavior: Clip.none,
                 children:[Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   height: 100,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.8),
-                    borderRadius: BorderRadius.all(Radius.circular(20))
+                    borderRadius: const BorderRadius.all(Radius.circular(20))
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -643,5 +721,17 @@ late int selectedIndex = 0;
         builder: (BuildContext buildercontext) {
           return alert;
         });
+  }
+
+
+  Future<Placemark> getAddressFromLatLng(context, double lat, double lng) async {
+    List<Placemark> placeMarks = await placemarkFromCoordinates(lat, lng);
+
+    /*for (var element in placeMarks) {
+      printWarning(element);
+    }*/
+    return placeMarks.first;
+
+    //return placeMarks;
   }
 }

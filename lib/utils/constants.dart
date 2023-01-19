@@ -30,4 +30,8 @@ const hiveDeliveryTableName = 'deliveries';
 const routeLogin = 'login';
 const routeHome = 'home';
 
+//PROFILE
 const defaultProfile = 'viewer';
+
+//MAPS
+const kGoogleApiKey = 'AIzaSyAE_Whjcw6InfId21slA11Mcbpi9cCk1B0';
