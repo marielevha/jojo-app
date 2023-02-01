@@ -8,6 +8,7 @@ import 'package:jojo/pages/courses.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jojo/pages/demenagement.dart';
 import 'package:jojo/pages/profil.dart';
+import 'package:jojo/pages/transportcolis.dart';
 import 'package:jojo/pages/widgets/menu_item.dart' as mw;
 import 'package:jojo/utils/global.colors.dart';
 import 'package:jojo/utils/menu.items.dart';
@@ -78,6 +79,36 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     )),
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                height: 50,
+              ),
+
+              SizedBox(
+                width: 300,
+                height: 130,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                          return TransportColis();
+                        }));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: GlobalColors.Orangecolor,
+                  ),
+                  child: Text(
+                    "Transport de colis volumineux",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                          color: GlobalColors.Whitecolor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        )),
                   ),
                 ),
               ),

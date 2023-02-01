@@ -10,6 +10,7 @@ import 'package:injectable/injectable.dart' as _i2;
 import 'package:jojo/services/api/config.api.dart' as _i3;
 import 'package:jojo/services/api/delivery.api.dart' as _i4;
 import 'package:jojo/services/api/user.api.dart' as _i6;
+import 'package:jojo/services/api/voucher.api.dart' as _i7;
 import 'package:jojo/services/hive/hive_service.dart' as _i5;
 
 /// ignore_for_file: unnecessary_lambdas
@@ -29,6 +30,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i4.DeliveryApi>(() => _i4.DeliveryApi());
     gh.lazySingleton<_i5.HiveService>(() => _i5.HiveService());
     gh.lazySingleton<_i6.UserApi>(() => _i6.UserApi());
+    gh.lazySingleton<_i7.UserApi>(() => _i7.UserApi());
     return this;
   }
 }

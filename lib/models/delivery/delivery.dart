@@ -65,6 +65,19 @@ class Delivery {
   @HiveField(25)
   late String contactPhone;
 
+  @HiveField(26)
+  late String ?house;
+  @HiveField(27)
+  late int ?bedroomsNumber;
+  @HiveField(28)
+  late String ?voucher;
+  @HiveField(29)
+  late String ?weightPackages;
+  @HiveField(30)
+  late String ?naturePackages;
+  @HiveField(31)
+  late String ?packages;
+
 
   //Delivery(this.id, this.name, this.phone, this.email, this.password, this.accessToken);
 
@@ -132,8 +145,12 @@ class Delivery {
     );
   }
 
+  @override
+  String toString() {
+    return 'Delivery{carNumber: $carNumber, routeNumber: $routeNumber, carType: $carType, transactionType: $transactionType, userId: $userId, userEmail: $userEmail, departLat: $departLat, departLng: $departLng, departCity: $departCity, departDate: $departDate, departHour: $departHour, destinationLat: $destinationLat, destinationLng: $destinationLng, destinationCity: $destinationCity, stopLat: $stopLat, stopLng: $stopLng, stopCity: $stopCity, routeNumber: $routeNumber, contactName: $contactName, contactPhone: $contactPhone}';
+  }
 
-  /*factory Document.fromJson(Map<String, dynamic> json) {
+/*factory Document.fromJson(Map<String, dynamic> json) {
     var _chapters = json['chapters'] as List;
     _chapters = _chapters.map((e) => Chapter.fromJson(e)).toList();
 
