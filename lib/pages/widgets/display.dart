@@ -59,7 +59,7 @@ class _DisplayDocState extends State<DisplayDoc> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${delivery.departDate} (${delivery.departHour})",
+                  "(${delivery.createdAt})",
                   style: GoogleFonts.poppins(
                       textStyle: TextStyle(
                         color: Colors.grey,

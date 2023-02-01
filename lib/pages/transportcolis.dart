@@ -254,7 +254,8 @@ class _TransportColisState extends State<TransportColis> {
             //printWarning("Date ${formatDate.toString()}");
             setState(() {
               dateController.text = formatDate.toString();
-              delivery.departDate = formatDate.toString();
+              delivery.destinationDate = formatDate.toString();
+              //delivery.departDate = formatDate.toString();
             });
           } else {
             print('Date non definie');
@@ -288,7 +289,8 @@ class _TransportColisState extends State<TransportColis> {
             //printWarning("Date ${formatTime.toString()}");
             setState(() {
               hourController.text = formatTime;
-              delivery.departHour = formatTime;
+              //delivery.departHour = formatTime;
+              delivery.destinationHour = formatTime;
             });
           } else {
             print('heure non definie');

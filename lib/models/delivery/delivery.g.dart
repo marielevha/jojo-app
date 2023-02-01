@@ -43,19 +43,20 @@ class DeliveryAdapter extends TypeAdapter<Delivery> {
       stopHour: fields[22] as String,
       contactName: fields[24] as String,
       contactPhone: fields[25] as String,
-    )
-      ..house = fields[26] as String
-      ..bedroomsNumber = fields[27] as int
-      ..voucher = fields[28] as String
-      ..weightPackages = fields[29] as String
-      ..naturePackages = fields[30] as String
-      ..packages = fields[31] as String;
+      house: fields[26] as String?,
+      bedroomsNumber: fields[27] as int?,
+      packages: fields[31] as String?,
+      naturePackages: fields[30] as String?,
+      weightPackages: fields[29] as String?,
+      voucher: fields[28] as String?,
+      createdAt: fields[32] as String?,
+    );
   }
 
   @override
   void write(BinaryWriter writer, Delivery obj) {
     writer
-      ..writeByte(32)
+      ..writeByte(33)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -119,7 +120,9 @@ class DeliveryAdapter extends TypeAdapter<Delivery> {
       ..writeByte(30)
       ..write(obj.naturePackages)
       ..writeByte(31)
-      ..write(obj.packages);
+      ..write(obj.packages)
+      ..writeByte(32)
+      ..write(obj.createdAt);
   }
 
   @override

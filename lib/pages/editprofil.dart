@@ -26,7 +26,8 @@ class _EditProfilState extends State<EditProfil> {
   /*Validation Update*/
   final _formKey = GlobalKey<FormState>();
   validate() {
-    return _formKey.currentState?.validate();
+    printWarning("Validate: ${_formKey.currentState!.validate()}");
+    return _formKey.currentState!.validate();
   }
   resetForm() {
     _formKey.currentState?.reset();
@@ -76,63 +77,66 @@ class _EditProfilState extends State<EditProfil> {
           child: Container(
             padding: EdgeInsets.all(30.0),
             alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 15),
-                buildTextField(labelText: "Nom", placeholder: currentUser.lastName, isPasswordTextField: false, controller: lastNameController),
-                buildTextField(labelText: "Prenom", placeholder: currentUser.firstName, isPasswordTextField: false, controller: firstNameController),
-                buildTextField(labelText: "Email", placeholder: currentUser.email, isPasswordTextField: false, controller: emailController),
-                buildTextField(labelText: "Numero", placeholder: currentUser.phone, isPasswordTextField: false, controller: phoneController),
-                buildTextField(labelText: "Pays", placeholder: currentUser.country, isPasswordTextField: false, controller: countryController),
-                buildTextField(labelText: "Mot de passe", placeholder: "********", isPasswordTextField: true, controller: passwordController),
-                const SizedBox(height: 35),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    OutlinedButton(
-                      onPressed: (){
-                        Navigator.of(context).pop(currentUser);
-                      }, 
-                      child: Text(
-                        "Annuler",
-                        style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                            fontSize: 15,
-                            letterSpacing: 2,
-                            color: Colors.black
-                          )
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 15),
+                  buildTextField(labelText: "Nom", placeholder: currentUser.lastName, isPasswordTextField: false, controller: lastNameController),
+                  buildTextField(labelText: "Prenom", placeholder: currentUser.firstName, isPasswordTextField: false, controller: firstNameController),
+                  buildTextField(labelText: "Email", placeholder: currentUser.email, isPasswordTextField: false, controller: emailController),
+                  buildTextField(labelText: "Numero", placeholder: currentUser.phone, isPasswordTextField: false, controller: phoneController),
+                  buildTextField(labelText: "Pays", placeholder: currentUser.country, isPasswordTextField: false, controller: countryController),
+                  buildTextField(labelText: "Mot de passe", placeholder: "********", isPasswordTextField: true, controller: passwordController),
+                  const SizedBox(height: 35),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      OutlinedButton(
+                        onPressed: (){
+                          Navigator.of(context).pop(currentUser);
+                        },
+                        child: Text(
+                          "Annuler",
+                          style: GoogleFonts.poppins(
+                              textStyle: TextStyle(
+                                  fontSize: 15,
+                                  letterSpacing: 2,
+                                  color: Colors.black
+                              )
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
                         ),
                       ),
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 50),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-                      ),
-                    ),
 
-                    ElevatedButton(
-                      onPressed: () async {
-                        await updateUser();
-                      }, 
-                      child: Text(
-                        "Modifier",
-                        style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                            fontSize: 15,
-                            letterSpacing: 2,
-                            color: Colors.white,
-                          )
-                        ),),
-                      style: ElevatedButton.styleFrom(
-                        primary: GlobalColors.bluecolor,
-                        padding: EdgeInsets.symmetric(horizontal: 50),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-                      ),
-                    )
-                  ],
-                )
-              ],
+                      ElevatedButton(
+                        onPressed: () async {
+                          await updateUser();
+                        },
+                        child: Text(
+                          "Modifier",
+                          style: GoogleFonts.poppins(
+                              textStyle: TextStyle(
+                                fontSize: 15,
+                                letterSpacing: 2,
+                                color: Colors.white,
+                              )
+                          ),),
+                        style: ElevatedButton.styleFrom(
+                            primary: GlobalColors.bluecolor,
+                            padding: EdgeInsets.symmetric(horizontal: 50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -180,7 +184,10 @@ class _EditProfilState extends State<EditProfil> {
 
   Future<void> updateUser() async {
     var isConnected = await checkInternetAccess();
-    if (validate()) {
+    /*if (!_formKey.currentState!.validate()) {
+    return;
+    }*/
+    if (_formKey.currentState!.validate()) {
       if(isConnected) {
         setState(() {
           isLoading = true;

@@ -20,6 +20,9 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     super.initState();
     delivery = widget.delivery;
+
+    //printWarning("Destination date: ${delivery.departDate}");
+    //printWarning("Destination hour: ${delivery.departHour}");
   }
   @override
   Widget build(BuildContext context) {
@@ -305,7 +308,7 @@ class _DetailPageState extends State<DetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "31/12/2022 (19:50)",
+                    "${delivery.createdAt}",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             color: Colors.grey,

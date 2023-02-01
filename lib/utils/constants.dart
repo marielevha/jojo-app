@@ -36,5 +36,5 @@ const defaultProfile = 'viewer';
 //MAPS
 const kGoogleApiKey = 'AIzaSyAE_Whjcw6InfId21slA11Mcbpi9cCk1B0';
 
-const kTransactionTypeOne = 'Déménagement/Transport de biens personel';
-const kTransactionTypeTwo = 'Transport de marchandises';
+const kTransactionTypeOne = 'Déménagement';
+const kTransactionTypeTwo = 'Transport de colis';

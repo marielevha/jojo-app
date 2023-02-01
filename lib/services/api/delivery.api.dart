@@ -89,15 +89,15 @@ class DeliveryApi {
       "city": delivery.departCity,
       "latitude": delivery.departLat,
       "longitude": delivery.departLng,
-      "ship_date": delivery.departDate,
-      "hour": delivery.departHour
+      "ship_date": "",
+      "hour": ""
     };
     Map<String, dynamic> destination() => {
       "city": delivery.destinationCity,
       "latitude": delivery.destinationLat,
       "longitude": delivery.destinationLng,
-      "ship_date": "",
-      "hour": ""
+      "ship_date": delivery.destinationDate,
+      "hour": delivery.destinationHour
     };
     Map<String, dynamic> stop() => {
       "city": delivery.stopCity,

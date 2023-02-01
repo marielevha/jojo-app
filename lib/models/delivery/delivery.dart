@@ -77,6 +77,10 @@ class Delivery {
   late String ?naturePackages;
   @HiveField(31)
   late String ?packages;
+  @HiveField(32)
+  late String ?createdAt;
+
+
 
 
   //Delivery(this.id, this.name, this.phone, this.email, this.password, this.accessToken);
@@ -108,6 +112,14 @@ class Delivery {
     required this.stopHour,
     required this.contactName,
     required this.contactPhone,
+
+    required this.house,
+    required this.bedroomsNumber,
+    required this.packages,
+    required this.naturePackages,
+    required this.weightPackages,
+    required this.voucher,
+    required this.createdAt,
   });
 
   Delivery.init();
@@ -127,6 +139,13 @@ class Delivery {
       status: json['status'],
       userId: json['user_id'],
       userEmail: json['user_email'],
+      house: json['house'],
+      bedroomsNumber: json['bedrooms_number'],
+      packages: json['packages'],
+      naturePackages: json['nature_packages'],
+      weightPackages: json['weight_packages'],
+      voucher: json['voucher'],
+      createdAt: json['createdat'],
       departLat: jsonDecode(json['depart'])['latitude'].toString(),
       departLng: jsonDecode(json['depart'])['longitude'].toString(),
       departCity: jsonDecode(json['depart'])['city'],
