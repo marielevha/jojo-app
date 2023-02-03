@@ -76,7 +76,7 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
 
           googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 14)));
           markers.clear();
-          markers.add(Marker(markerId: const MarkerId('currentLocation'),position: LatLng(position.latitude, position.longitude)));
+          //markers.add(Marker(markerId: const MarkerId('currentLocation'),position: LatLng(position.latitude, position.longitude)));
           setState(() {});
         },
         label: const Text("Current Location"),

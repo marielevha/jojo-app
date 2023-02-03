@@ -24,39 +24,39 @@ class Delivery {
 
   //Depart info
   @HiveField(8)
-  late String departLat;
+  late String ?departLat;
   @HiveField(9)
-  late String departLng;
+  late String ?departLng;
   @HiveField(10)
-  late String departCity;
+  late String ?departCity;
   @HiveField(11)
-  late String departDate;
+  late String ?departDate;
   @HiveField(12)
-  late String departHour;
+  late String ?departHour;
 
   //Destination info
   @HiveField(13)
-  late String destinationLat;
+  late String ?destinationLat;
   @HiveField(14)
-  late String destinationLng;
+  late String ?destinationLng;
   @HiveField(15)
-  late String destinationCity;
+  late String ?destinationCity;
   @HiveField(16)
-  late String destinationDate;
+  late String ?destinationDate;
   @HiveField(17)
-  late String destinationHour;
+  late String ?destinationHour;
 
   //Stop info
   @HiveField(18)
-  late String stopLat;
+  late String ?stopLat;
   @HiveField(19)
-  late String stopLng;
+  late String ?stopLng;
   @HiveField(20)
-  late String stopCity;
+  late String ?stopCity;
   @HiveField(21)
-  late String stopDate;
+  late String ?stopDate;
   @HiveField(22)
-  late String stopHour;
+  late String ?stopHour;
 
   @HiveField(23)
   late int routeNumber;

@@ -18,6 +18,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:jojo/utils/locator.dart';
+import 'package:jojo/utils/size.config.dart';
 
 enum TypeVehicule { Petit, Moyen, Grand }
 
@@ -66,6 +67,23 @@ class _DemenagementState extends State<Demenagement> {
     delivery.house = 'Appartement';
     delivery.bedroomsNumber = 1;
     delivery.transactionType = kTransactionTypeOne;
+    delivery.departDate = '';
+    delivery.departHour = '';
+    delivery.departCity = '';
+    delivery.departLat = '';
+    delivery.departLng = '';
+
+    delivery.destinationDate = '';
+    delivery.destinationHour = '';
+    delivery.destinationCity = '';
+    delivery.destinationLat = '';
+    delivery.destinationLng = '';
+
+    delivery.stopDate = '';
+    delivery.stopHour = '';
+    delivery.stopCity = '';
+    delivery.stopLat = '';
+    delivery.stopLng = '';
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -203,7 +221,7 @@ class _DemenagementState extends State<Demenagement> {
             //printWarning("Date ${formatDate.toString()}");
             setState(() {
               dateController.text = formatDate.toString();
-              //delivery.departDate = formatDate.toString();
+              delivery.departDate = '';
               delivery.destinationDate = formatDate.toString();
             });
           } else {
@@ -239,7 +257,7 @@ class _DemenagementState extends State<Demenagement> {
             //printWarning("Date ${formatTime.toString()}");
             setState(() {
               hourController.text = formatTime;
-              //delivery.departHour = formatTime;
+              delivery.departHour = '';
               delivery.destinationHour = formatTime;
             });
           } else {
@@ -256,8 +274,10 @@ class _DemenagementState extends State<Demenagement> {
   late final List _nbreVehicule = ["1", "2", "3", "4", "5"];
   late String? _valueVehicule = "1";
   Widget _buildNbreVehicule() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 170,
+      //width: 170,
+      width: size.width * 0.34,
       child: DropdownButtonFormField(
         value: _valueVehicule,
         items: _nbreVehicule
@@ -291,8 +311,10 @@ class _DemenagementState extends State<Demenagement> {
   late final List _nbreTrajet = ["1", "2", "3", "4", "5"];
   late String? _valueTrajet = "1";
   Widget _buildTrajet() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 150,
+      //width: 150,
+      width: size.width * 0.34,
       child: DropdownButtonFormField(
         value: _valueTrajet,
         items: _nbreTrajet
@@ -403,6 +425,7 @@ late List<Voiture> _chipsList = [
   ];
 
   Widget _buildTypeVehicule(){
+    Size size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
       child: Column(
@@ -424,36 +447,36 @@ late List<Voiture> _chipsList = [
             splashColor: Colors.amber[700],
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
                     Image(
                       image: AssetImage('assets/images/camionpetit.png'),
-                      height: 50,
+                      height: 40,
                     ),
                     Text(_typeVoiture[0], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
                   ],
                 ),
               ),
               Padding(
-                padding:const EdgeInsets.all(12),
+                padding:const EdgeInsets.all(6),
                 child: Column(
                   children: [
                     Image(
                       image: AssetImage('assets/images/camionmoyen.png'),
-                      height: 50,
+                      height: 40,
                     ),
                     Text(_typeVoiture[1], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
                     Image(
                       image: AssetImage('assets/images/camiongrand.png'),
-                      height: 50,
+                      height: 40,
                     ),
                     Text(_typeVoiture[2], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
                   ],
@@ -698,6 +721,10 @@ late List<Voiture> _chipsList = [
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    Size size = MediaQuery.of(context).size;
+    double defaultSize = size.height - (size.height * 0.1);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: GlobalColors.bluecolor,
@@ -712,6 +739,8 @@ late List<Voiture> _chipsList = [
           child: ListView(
             children: <Widget>[
               Container(
+                width: size.width,
+                //height: defaultSize,
                 padding: const EdgeInsets.all(30.0),
                 alignment: Alignment.center,
                 child: Form(
@@ -746,7 +775,7 @@ late List<Voiture> _chipsList = [
                         children: <Widget>[
                           _buildNbreVehicule(),
                           SizedBox(
-                            width: 50,
+                            width: size.width * 0.15,
                           ),
                           _buildTrajet(),
                         ],
@@ -761,7 +790,7 @@ late List<Voiture> _chipsList = [
                       ),
                       _buildTypeVehicule(),
                       SizedBox(
-                        height: 50,
+                        height: 20,
                       ),
                       _TypeDeMaison(),
                       SizedBox(
@@ -847,7 +876,7 @@ late List<Voiture> _chipsList = [
           //delivery.departLat = null;
           //delivery.departLng = null;
           printWarning("Car number: ${delivery.carNumber}");
-          printWarning("[DELIVERY]: $delivery");
+          //printWarning("[DELIVERY]: $delivery");
           createDelivery(delivery);
           /*showDialog(
             context: context,
@@ -863,7 +892,7 @@ late List<Voiture> _chipsList = [
 
             ),
           );*/
-          Timer(const Duration(seconds: 3600), () {
+          Timer(const Duration(seconds: 2), () {
             Get.to(HomePage());
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Stack(
@@ -888,7 +917,6 @@ late List<Voiture> _chipsList = [
                                 fontSize: 12,
                                 overflow: TextOverflow.ellipsis,
                               ),
-
                             ),
                           ),
                         ],
@@ -944,7 +972,7 @@ late List<Voiture> _chipsList = [
       });
 
       try {
-        printWarning("DELIVERY: $delivery");
+        //printWarning("DELIVERY: $delivery");
         delivery = await deliveryApi.createDelivery(delivery: delivery);
         printWarning("DELIVERY CREATED");
       }

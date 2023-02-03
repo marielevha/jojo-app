@@ -36,8 +36,8 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
     super.initState();
     _animationController = AnimationController(vsync: this, duration: animationDuration);
 
-    emailController.text = 'jessica@jojo.com';
-    passwordController.text = 'password';
+    //emailController.text = 'jessica@jojo.com';
+    //passwordController.text = 'password';
 
   }
   

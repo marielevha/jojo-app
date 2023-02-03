@@ -65,6 +65,23 @@ class _TransportColisState extends State<TransportColis> {
     //delivery.house = '';
     //delivery.bedroomsNumber = 0;
     delivery.transactionType = kTransactionTypeTwo;
+    delivery.departDate = '';
+    delivery.departHour = '';
+    delivery.departCity = '';
+    delivery.departLat = '';
+    delivery.departLng = '';
+
+    delivery.destinationDate = '';
+    delivery.destinationHour = '';
+    delivery.destinationCity = '';
+    delivery.destinationLat = '';
+    delivery.destinationLng = '';
+
+    delivery.stopDate = '';
+    delivery.stopHour = '';
+    delivery.stopCity = '';
+    delivery.stopLat = '';
+    delivery.stopLng = '';
   }
 
   @override
@@ -337,8 +354,10 @@ class _TransportColisState extends State<TransportColis> {
   late final List _nbreVehicule = ["1", "2", "3", "4", "5"];
   late String? _valueVehicule = "1";
   Widget _buildNbreVehicule() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 170,
+      //width: 170,
+      width: size.width * 0.34,
       child: DropdownButtonFormField(
         value: _valueVehicule,
         items: _nbreVehicule
@@ -371,8 +390,10 @@ class _TransportColisState extends State<TransportColis> {
   late final List _nbreTrajet = ["1", "2", "3", "4", "5"];
   late String? _valueTrajet = "1";
   Widget _buildTrajet() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 150,
+      //width: 150,
+      width: size.width * 0.34,
       child: DropdownButtonFormField(
         value: _valueTrajet,
         items: _nbreTrajet
@@ -720,6 +741,7 @@ class _TransportColisState extends State<TransportColis> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: GlobalColors.bluecolor,
@@ -776,7 +798,7 @@ class _TransportColisState extends State<TransportColis> {
                     children: <Widget>[
                       _buildNbreVehicule(),
                       SizedBox(
-                        width: 50,
+                        width: size.width * 0.15,
                       ),
                       _buildTrajet(),
                     ],
@@ -875,7 +897,7 @@ class _TransportColisState extends State<TransportColis> {
       print("Personne à contacter: " + _nomPrenom);
       print("Numero de tel: " + _numero);*/
       
-      Timer(const Duration(seconds: 3602), () {
+      Timer(const Duration(seconds: 2), () {
         Get.to(HomePage());
         QuickAlert.show(
           context: context,
