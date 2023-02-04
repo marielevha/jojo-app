@@ -19,6 +19,8 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:jojo/utils/locator.dart';
 import 'package:jojo/utils/size.config.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 enum TypeVehicule { Petit, Moyen, Grand }
 
@@ -41,6 +43,7 @@ class _DemenagementState extends State<Demenagement> {
   final DeliveryApi deliveryApi = locator<DeliveryApi>();
 
   bool isLoading = false;
+  bool isCompleted = false;
   Delivery delivery = Delivery.init();
   late int reduction = 0;
   final TextEditingController nameController = TextEditingController();
@@ -59,6 +62,7 @@ class _DemenagementState extends State<Demenagement> {
     super.initState();
     dateController.text = "";
     _valueVehicule = _nbreVehicule[0];
+    isCompleted = false;
 
     delivery.voucher = '';
     delivery.routeNumber = 1;
@@ -94,7 +98,7 @@ class _DemenagementState extends State<Demenagement> {
     return TextFormField(
       controller: lieuDepartController,
       decoration: InputDecoration(
-        suffixIcon: IconButton(
+        /*suffixIcon: IconButton(
           onPressed: () async {
             //Open map
             printWarning("Open map depart");
@@ -126,7 +130,7 @@ class _DemenagementState extends State<Demenagement> {
               color: Colors.blue,
               size: 15,
             )
-        ),
+        ),*/
         labelText: "Lieu d'enlevement"
       ),
       validator: (String? value) {
@@ -149,7 +153,7 @@ class _DemenagementState extends State<Demenagement> {
     return TextFormField(
       controller: lieuDestinationController,
       decoration: InputDecoration(
-          suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
               onPressed: () async {
                 //Open map
                 printWarning("Open map destination");
@@ -178,8 +182,9 @@ class _DemenagementState extends State<Demenagement> {
                 color: Colors.blue,
                 size: 15,
               )
-          ),
-          labelText: 'Lieu de destination'),
+          ),*/
+          labelText: 'Lieu de destination'
+      ),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de destination est vide';
@@ -197,10 +202,12 @@ class _DemenagementState extends State<Demenagement> {
   //////////////////////////date de depart///////////////////////////
 
   Widget _buildDate() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 150,
+      width: size.width * 0.34,
       child: TextFormField(
         controller: dateController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
             suffixIcon: Icon(
               FontAwesomeIcons.calendar,
@@ -228,6 +235,12 @@ class _DemenagementState extends State<Demenagement> {
             print('Date non definie');
           }
         },
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return "la date n'est pas définie";
+          }
+          return null;
+        },
       ),
     );
   }
@@ -236,10 +249,12 @@ class _DemenagementState extends State<Demenagement> {
 
   ///////////////////////////heure de depart/////////////////////////////
   Widget _buildHeure() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 100,
+      width: size.width * 0.34,
       child: TextFormField(
         controller: hourController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
             suffixIcon: Icon(
               FontAwesomeIcons.clock,
@@ -263,6 +278,12 @@ class _DemenagementState extends State<Demenagement> {
           } else {
             print('heure non definie');
           }
+        },
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return "l'heure n'est pas définie";
+          }
+          return null;
         },
       ),
     );
@@ -348,7 +369,7 @@ class _DemenagementState extends State<Demenagement> {
     return TextFormField(
       controller: lieuStopController,
       decoration: InputDecoration(
-          suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
               onPressed: () async {
                 //Open map
                 printWarning("Open map stop");
@@ -377,8 +398,9 @@ class _DemenagementState extends State<Demenagement> {
                 color: Colors.blue,
                 size: 15,
               )
-          ),
-          labelText: "Ajouter un stop en cours de trajet"),
+          ),*/
+          labelText: "Ajouter un stop en cours de trajet"
+      ),
       onSaved: (String? arret) {
         if(arret == null){
           _lieuArret = 'Pas de stop';
@@ -427,6 +449,7 @@ late List<Voiture> _chipsList = [
   Widget _buildTypeVehicule(){
     Size size = MediaQuery.of(context).size;
     return Container(
+      width: size.width * 0.85,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,7 +514,7 @@ late List<Voiture> _chipsList = [
                       select[index] = true;
                       carTypeController.text = _typeVoiture[index];
 
-                      printWarning("CAR TYPE: ${carTypeController.text}");
+                      //printWarning("CAR TYPE: ${carTypeController.text}");
                       delivery.carType = carTypeController.text.trim();
                     } else {
                       select[index] = false;
@@ -520,6 +543,7 @@ late List<Voiture> _chipsList = [
             ),
         TextFormField(
           controller: nameController,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
             hintText: /*currentUser != null ? currentUser.name :*/ 'Nom & prenoms',
             hintStyle: GoogleFonts.poppins(),
@@ -531,12 +555,12 @@ late List<Voiture> _chipsList = [
             return null;
           },
           onSaved: (String? nom) {
-            printWarning("Contact name: ${nameController.text}");
+            //printWarning("Contact name: ${nameController.text}");
             _nomPrenom = nom!;
             delivery.contactName = nameController.text.trim();
           },
           onChanged: (String? nom) {
-            printWarning("Contact name: ${nameController.text}");
+            //printWarning("Contact name: ${nameController.text}");
             delivery.contactName = nameController.text.trim();
           },
         ),
@@ -562,7 +586,7 @@ late List<Voiture> _chipsList = [
         onChanged: (val) {
           setState(() {
             _valueMaisons = val as String;
-            print(_valueMaisons);
+            //print(_valueMaisons);
             delivery.house = val;
           });
         },
@@ -595,8 +619,8 @@ late List<Voiture> _chipsList = [
         onChanged: (val) {
           setState(() {
             _valuePieces = val as String;
-            print(_valuePieces);
-            printWarning("Nombre de pieces: ${_valuePieces}");
+            //print(_valuePieces);
+            //printWarning("Nombre de pieces: ${_valuePieces}");
             delivery.bedroomsNumber = int.parse(val);
           });
         },
@@ -615,10 +639,11 @@ late List<Voiture> _chipsList = [
 //////////////////////////Code promo////////////////////////
   late final String _codePromo;
   Widget _buildCodePromo() {
+    Size size = MediaQuery.of(context).size;
     return Row(
       children: [
         SizedBox(
-          width: 150,
+          width: size.width * 0.45,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -643,7 +668,7 @@ late List<Voiture> _chipsList = [
         Container(
           alignment: Alignment.center,
           child: SizedBox(
-            width: 100,
+            width: size.width * 0.3,
             height: 40,
             child: ElevatedButton(
               onPressed: isLoading ? null : () async {
@@ -651,7 +676,7 @@ late List<Voiture> _chipsList = [
                   _codePromo = voucherController.text.toUpperCase();
                   Voucher voucher = await checkVoucher(_codePromo);
                   if(voucher.id != 0) {
-                    printWarning("ACTIVE VOUCHER: $_codePromo");
+                    //printWarning("ACTIVE VOUCHER: $_codePromo");
                     reduction = voucher.value;
                     delivery.voucher = _codePromo;
                   }
@@ -682,10 +707,12 @@ late List<Voiture> _chipsList = [
   //////////////////////////numero de telephone/////////////////////////////////////
   late final String _numero;
   Widget _buildNumero() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 200,
+      width: size.width * 0.85,
       child: TextFormField(
         controller: phoneController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
           suffixIcon: Icon(
             FontAwesomeIcons.phone,
@@ -705,12 +732,12 @@ late List<Voiture> _chipsList = [
           return null;
         },
         onSaved: (String? value) {
-          printWarning("Contact phone: ${phoneController.text}");
+          //printWarning("Contact phone: ${phoneController.text}");
           _numero = value!;
           delivery.contactPhone = phoneController.text.trim();
         },
         onChanged: (String? value) {
-          printWarning("Contact phone: ${phoneController.text}");
+          //printWarning("Contact phone: ${phoneController.text}");
           delivery.contactPhone = phoneController.text.trim();
         },
       ),
@@ -763,7 +790,7 @@ late List<Voiture> _chipsList = [
                         children: <Widget>[
                           _buildDate(),
                           SizedBox(
-                            width: 50,
+                            width: size.width * 0.15,
                           ),
                           _buildHeure()
                         ],
@@ -844,7 +871,76 @@ late List<Voiture> _chipsList = [
     );
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Remplissez les champs obligatoires"),
+      ));
+    }
+    else {
+      _formKey.currentState!.save();
+      try {
+        delivery.userId = currentUser.id;
+        delivery.userEmail = currentUser.email;
+        delivery.contactName = nameController.text;
+        delivery.contactPhone = phoneController.text;
+        delivery.departCity = lieuDepartController.text;
+        delivery.destinationCity = lieuDestinationController.text;
+        delivery.stopCity = lieuStopController.text;
+        await createDelivery(delivery);
+        printWarning("Created");
+
+        if(isCompleted) {
+          Timer(const Duration(seconds: 0), () {
+            Get.to(HomePage());
+            QuickAlert.show(
+              context: context,
+              text:
+              "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+              type: QuickAlertType.success,
+              confirmBtnText: "Ok",
+              onConfirmBtnTap: () {
+                Navigator.pop(context);
+              },
+            );
+          });
+        }
+
+      }
+      catch(error) {
+        printError(error);
+      }
+    }
+    /*if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Remplissez les champs obligatoires"),
+      ));
+    }*/
+    //else {
+    //_formKey.currentState!.save();
+
+
+
+    /*print('Details du formulaire transport de colis volumineux');
+      print("Lieu d'enlevement: " + _lieuDepart);
+      print("Lieu de destination: " + _lieuDestination);
+      print("Lieu d'arret: " + _lieuArret);
+      print("Date: " + dateController.text);
+      print("Heure: " + _heure.text);
+      print("Nature du colis: " + _natureColis);
+      print('Nombre de vehicule: ' '$_valueVehicule');
+      print('Nombre de trajet: ' '$_valueTrajet');
+      print("Poids: " + _nbrePoid + " kg");
+      print("Liste des colis: " + _listeColis);
+      print("Type de camion: " + _voiture!);
+      print("Coupon: ");
+      print("Personne à contacter: " + _nomPrenom);
+      print("Numero de tel: " + _numero);*/
+
+    //}
+  }
+
+  void showAlertDialogLast(BuildContext context) {
     Widget okBtn = ElevatedButton(
         onPressed: () async {
           /*if (!_formKey.currentState!.validate()) {
@@ -867,6 +963,10 @@ late List<Voiture> _chipsList = [
           delivery.userEmail = currentUser.email;
           delivery.contactName = nameController.text;
           delivery.contactPhone = phoneController.text;
+
+          delivery.departCity = lieuDepartController.text;
+          delivery.destinationCity = lieuDestinationController.text;
+          delivery.stopCity = lieuStopController.text;
 
           printWarning(delivery.house!);
           printWarning("${delivery.bedroomsNumber}");
@@ -973,8 +1073,15 @@ late List<Voiture> _chipsList = [
 
       try {
         //printWarning("DELIVERY: $delivery");
-        delivery = await deliveryApi.createDelivery(delivery: delivery);
-        printWarning("DELIVERY CREATED");
+        var response = await deliveryApi.createDelivery(delivery: delivery);
+        if(response == 201) {
+          setState(() {
+            isCompleted = true;
+            isLoading = false;
+          });
+          printWarning("DELIVERY CREATED");
+        }
+        //return delivery;
       }
       catch (err) {
         setState(() {

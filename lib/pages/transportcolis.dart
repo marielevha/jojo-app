@@ -37,6 +37,7 @@ class _TransportColisState extends State<TransportColis> {
   final DeliveryApi deliveryApi = locator<DeliveryApi>();
 
   bool isLoading = false;
+  bool isCompleted = false;
   Delivery delivery = Delivery.init();
   late int reduction = 0;
   final TextEditingController nameController = TextEditingController();
@@ -57,6 +58,7 @@ class _TransportColisState extends State<TransportColis> {
     super.initState();
     dateController.text = "";
     _valueVehicule = _nbreVehicule[0];
+    isCompleted = false;
 
     delivery.voucher = '';
     delivery.routeNumber = 1;
@@ -95,9 +97,10 @@ class _TransportColisState extends State<TransportColis> {
   late final String _lieuDepart;
   Widget _buildLieuDepart() {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: lieuDepartController,
       decoration: InputDecoration(
-          suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
               onPressed: () async {
                 //Open map
                 printWarning("Open map depart");
@@ -129,7 +132,7 @@ class _TransportColisState extends State<TransportColis> {
                 color: Colors.blue,
                 size: 15,
               )
-          ),
+          ),*/
           labelText: "Lieu d'enlevement"
       ),
       validator: (String? value) {
@@ -149,9 +152,10 @@ class _TransportColisState extends State<TransportColis> {
   late final String _lieuDestination;
   Widget _buildLieuDestination() {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: lieuDestinationController,
       decoration: InputDecoration(
-          suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
               onPressed: () async {
                 //Open map
                 printWarning("Open map destination");
@@ -180,8 +184,9 @@ class _TransportColisState extends State<TransportColis> {
                 color: Colors.blue,
                 size: 15,
               )
-          ),
-          labelText: 'Lieu de destination'),
+          ),*/
+          labelText: 'Lieu de destination'
+      ),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de destination est vide';
@@ -199,9 +204,10 @@ class _TransportColisState extends State<TransportColis> {
   late final String _lieuArret;
   Widget _buildLieuArret() {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: lieuStopController,
       decoration: InputDecoration(
-          suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
               onPressed: () async {
                 //Open map
                 printWarning("Open map stop");
@@ -230,7 +236,7 @@ class _TransportColisState extends State<TransportColis> {
                 color: Colors.blue,
                 size: 15,
               )
-          ),
+          ),*/
           labelText: "Ajouter un stop en cours de trajet"),
       onSaved: (String? arret) {
         if(arret == null){
@@ -247,8 +253,9 @@ class _TransportColisState extends State<TransportColis> {
 
   //////////////////////////date de depart///////////////////////////
   Widget _buildDate() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 150,
+      width: size.width * 0.34,
       child: TextFormField(
         controller: dateController,
         decoration: const InputDecoration(
@@ -278,6 +285,13 @@ class _TransportColisState extends State<TransportColis> {
             print('Date non definie');
           }
         },
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return "la date n'est pas définie";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
       ),
     );
   }
@@ -285,10 +299,12 @@ class _TransportColisState extends State<TransportColis> {
 
   ///////////////////////////heure de depart/////////////////////////////
   Widget _buildHeure() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 100,
+      width: size.width * 0.34,
       child: TextFormField(
         controller: hourController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
             suffixIcon: Icon(
               FontAwesomeIcons.clock,
@@ -313,6 +329,12 @@ class _TransportColisState extends State<TransportColis> {
             print('heure non definie');
           }
         },
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return "l'heure n'est pas définie";
+          }
+          return null;
+        },
       ),
     );
   }
@@ -325,6 +347,7 @@ class _TransportColisState extends State<TransportColis> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: natureController,
           decoration: InputDecoration(
             hintText: 'Nature du colis',
@@ -337,11 +360,11 @@ class _TransportColisState extends State<TransportColis> {
             return null;
           },
           onSaved: (String? nature) {
-            _natureColis = nature!;
+            //_natureColis = nature!;
             delivery.naturePackages = natureController.text;
           },
           onChanged: (String? nature) {
-            _natureColis = nature!;
+            //_natureColis = nature!;
             delivery.naturePackages = natureController.text;
           },
         ),
@@ -423,10 +446,11 @@ class _TransportColisState extends State<TransportColis> {
   //////////////////////////Poids////////////////////////
   late final String _nbrePoid;
   Widget _buildPoids() {
+    Size size = MediaQuery.of(context).size;
     return Row(
       children: [
         SizedBox(
-          width: 50,
+          width: size.width * 0.5,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -449,7 +473,7 @@ class _TransportColisState extends State<TransportColis> {
           ),
         ),
         SizedBox(
-          width: 5,
+          width: size.width * 0.15,
         ),
         Text(
           "Kg",
@@ -513,7 +537,9 @@ class _TransportColisState extends State<TransportColis> {
   ];
 
   Widget _buildTypeVehicule() {
+    Size size = MediaQuery.of(context).size;
     return Container(
+      width: size.width * 0.85,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -581,7 +607,7 @@ class _TransportColisState extends State<TransportColis> {
                     _voiture = _typeVoiture[index];
                     carTypeController.text = _typeVoiture[index];
 
-                    printWarning("CAR TYPE: ${carTypeController.text}");
+                    //printWarning("CAR TYPE: ${carTypeController.text}");
                     delivery.carType = carTypeController.text.trim();
                   } else {
                     select[index] = false;
@@ -599,10 +625,11 @@ class _TransportColisState extends State<TransportColis> {
   //////////////////////////Code promo////////////////////////
   late final String _codePromo;
   Widget _buildCodePromo() {
+    Size size = MediaQuery.of(context).size;
     return Row(
       children: [
         SizedBox(
-          width: 150,
+          width: size.width * 0.45,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -627,7 +654,7 @@ class _TransportColisState extends State<TransportColis> {
         Container(
           alignment: Alignment.center,
           child: SizedBox(
-            width: 100,
+            width: size.width * 0.3,
             height: 40,
             child: ElevatedButton(
               onPressed: isLoading ? null : () async {
@@ -674,6 +701,7 @@ class _TransportColisState extends State<TransportColis> {
           style: TextStyle(color: Colors.grey, fontSize: 20),
         ),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: nameController,
           decoration: InputDecoration(
             hintText: /*currentUser != null ? currentUser.name :*/ 'Nom & prenoms',
@@ -686,12 +714,12 @@ class _TransportColisState extends State<TransportColis> {
             return null;
           },
           onSaved: (String? nom) {
-            printWarning("Contact name: ${nameController.text}");
+            //printWarning("Contact name: ${nameController.text}");
             _nomPrenom = nom!;
             delivery.contactName = nameController.text.trim();
           },
           onChanged: (String? nom) {
-            printWarning("Contact name: ${nameController.text}");
+            //printWarning("Contact name: ${nameController.text}");
             delivery.contactName = nameController.text.trim();
           },
         ),
@@ -703,9 +731,11 @@ class _TransportColisState extends State<TransportColis> {
 //////////////////////////numero de telephone/////////////////////////////////////
   late final String _numero;
   Widget _buildNumero() {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
-      width: 200,
+      width: size.width * 0.85,
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: phoneController,
         decoration: const InputDecoration(
           suffixIcon: Icon(
@@ -726,12 +756,12 @@ class _TransportColisState extends State<TransportColis> {
           return null;
         },
         onSaved: (String? value) {
-          printWarning("Contact phone: ${phoneController.text}");
+          //printWarning("Contact phone: ${phoneController.text}");
           _numero = value!;
           delivery.contactPhone = phoneController.text.trim();
         },
         onChanged: (String? value) {
-          printWarning("Contact phone: ${phoneController.text}");
+          //printWarning("Contact phone: ${phoneController.text}");
           delivery.contactPhone = phoneController.text.trim();
         },
       ),
@@ -782,7 +812,7 @@ class _TransportColisState extends State<TransportColis> {
                     children: <Widget>[
                       _buildDate(),
                       SizedBox(
-                        width: 50,
+                        width: size.width * 0.15,
                       ),
                       _buildHeure()
                     ],
@@ -862,7 +892,50 @@ class _TransportColisState extends State<TransportColis> {
     );
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Remplissez les champs obligatoires"),
+      ));
+    }
+    else {
+      printWarning("Valid! ${natureController.text}");
+      _formKey.currentState!.save();
+      try {
+        delivery.userId = currentUser.id;
+        delivery.userEmail = currentUser.email;
+        delivery.contactName = nameController.text;
+        delivery.contactPhone = phoneController.text;
+        delivery.naturePackages = natureController.text;
+        delivery.weightPackages = weightController.text;
+        delivery.packages = packagesController.text;
+        delivery.departCity = lieuDepartController.text;
+        delivery.destinationCity = lieuDestinationController.text;
+        delivery.stopCity = lieuStopController.text;
+        await createDelivery(delivery);
+        printWarning("Created");
+
+        if(isCompleted) {
+          Timer(const Duration(seconds: 0), () {
+            Get.to(HomePage());
+            QuickAlert.show(
+              context: context,
+              text:
+              "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+              type: QuickAlertType.success,
+              confirmBtnText: "Ok",
+              onConfirmBtnTap: () {
+                Navigator.pop(context);
+              },
+            );
+          });
+        }
+
+    }
+    catch(error) {
+      printError("Error0: $error");
+    }
+  }
     /*if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Remplissez les champs obligatoires"),
@@ -871,45 +944,9 @@ class _TransportColisState extends State<TransportColis> {
     //else {
       //_formKey.currentState!.save();
 
-      delivery.userId = currentUser.id;
-      delivery.userEmail = currentUser.email;
-      delivery.contactName = nameController.text;
-      delivery.contactPhone = phoneController.text;
-      delivery.naturePackages = natureController.text;
-      delivery.weightPackages = weightController.text;
-      delivery.packages = packagesController.text;
-      printWarning("Depart: ${packagesController.text}, ${natureController.text}");
 
-      createDelivery(delivery);
-      /*print('Details du formulaire transport de colis volumineux');
-      print("Lieu d'enlevement: " + _lieuDepart);
-      print("Lieu de destination: " + _lieuDestination);
-      print("Lieu d'arret: " + _lieuArret);
-      print("Date: " + dateController.text);
-      print("Heure: " + _heure.text);
-      print("Nature du colis: " + _natureColis);
-      print('Nombre de vehicule: ' '$_valueVehicule');
-      print('Nombre de trajet: ' '$_valueTrajet');
-      print("Poids: " + _nbrePoid + " kg");
-      print("Liste des colis: " + _listeColis);
-      print("Type de camion: " + _voiture!);
-      print("Coupon: ");
-      print("Personne à contacter: " + _nomPrenom);
-      print("Numero de tel: " + _numero);*/
       
-      Timer(const Duration(seconds: 2), () {
-        Get.to(HomePage());
-        QuickAlert.show(
-          context: context,
-          text:
-              "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
-          type: QuickAlertType.success,
-          confirmBtnText: "Ok",
-          onConfirmBtnTap: () {
-            Navigator.pop(context);
-          },
-        );
-      });
+
     //}
   }
 
@@ -934,14 +971,21 @@ class _TransportColisState extends State<TransportColis> {
 
       try {
         //printWarning("DELIVERY: $delivery");
-        delivery = await deliveryApi.createDeliveryPackage(delivery: delivery);
-        printWarning("DELIVERY CREATED");
+        var response = await deliveryApi.createDeliveryPackage(delivery: delivery);
+        if(response == 201) {
+          setState(() {
+            isCompleted = true;
+            isLoading = false;
+          });
+          printWarning("DELIVERY CREATED");
+        }
       }
       catch (err) {
         setState(() {
           isLoading = false;
         });
-        printError(err);
+        //printError(err);
+        printError("Error1: $err");
       }
     }
     else {

@@ -68,10 +68,10 @@ class DeliveryApi {
     var response = await request.send();
     printWarning(response.statusCode);
     if (response.statusCode == 201) {
-      var respStr = await response.stream.bytesToString();
-      printError(respStr);
-      Delivery deliveryResponse = Delivery.fromJson(jsonDecode(respStr));
-      return deliveryResponse;
+      //var respStr = await response.stream.bytesToString();
+      //printError(respStr);
+      //Delivery deliveryResponse = Delivery.fromJson(jsonDecode(respStr));
+      return response.statusCode;
     }
     else {
       throw response;
@@ -128,12 +128,13 @@ class DeliveryApi {
     var response = await request.send();
     printWarning(response.statusCode);
     if (response.statusCode == 201) {
-      var respStr = await response.stream.bytesToString();
-      printError(respStr);
-      Delivery deliveryResponse = Delivery.fromJson(jsonDecode(respStr));
-      return deliveryResponse;
+      //var respStr = await response.stream.bytesToString();
+      //printError(respStr);
+      //Delivery deliveryResponse = Delivery.fromJson(jsonDecode(respStr));
+      return response.statusCode;
     }
     else {
+      printError("Error1: $response");
       throw response;
     }
   }
