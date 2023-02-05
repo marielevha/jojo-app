@@ -86,7 +86,7 @@ class UserApi {
       /*var respStr = */await response.stream.bytesToString();
 
       //Empty current user
-      currentUser = User.init();
+      currentUser = User.initId(0);
       //Clear user box
       await hiveService.clearBox(boxName: hiveUserTableName);
       await addFakeUser();
@@ -287,6 +287,14 @@ class UserApi {
     User user = User.init();
     user.id = 1;
     user.name = 'config';
+    user.phone = 'phone';
+    user.email = 'config@jojo.com';
+    user.firstName = '';
+    user.lastName = '';
+    user.country = '';
+    user.profile = '';
+    user.password = '';
+    user.accessToken = '';
     userBox.add(user);
   }
 }

@@ -57,7 +57,8 @@ class _ProfilState extends State<Profil> {
             child: Column(
               children: [
                 Text(
-                  currentUser != null ? currentUser.name : appDefaultUserName,
+                  //currentUser != null ? currentUser.name : appDefaultUserName,
+                  currentUser.id != 0 ? currentUser.name : appDefaultUserName,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
@@ -66,7 +67,7 @@ class _ProfilState extends State<Profil> {
                           fontWeight: FontWeight.bold)),
                 ),
                 Text(
-                  currentUser != null ? currentUser.email : appEmail,
+                  currentUser.id != 0 ? currentUser.email : appEmail,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                       textStyle: const TextStyle(

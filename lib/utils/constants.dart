@@ -9,7 +9,7 @@ const apiBaseUrl = 'http://www.backend.jojo-logistic.com/api';
 //const apiBaseUrl = 'http://192.168.1.183:8000/api';
 const apiResponseSize = 12;
 String currentToken = '';
-late User currentUser;
+User currentUser = User.initId(0);
 bool subjectTableRemote = false;
 bool favoriteRemote = false;
 bool documentRemote = false;

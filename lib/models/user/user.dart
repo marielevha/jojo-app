@@ -40,6 +40,7 @@ class User {
   });
 
   User.init();
+  User.initId(this.id);
 
   User.register(
     this.id,

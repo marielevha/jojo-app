@@ -21,6 +21,8 @@ import 'package:jojo/utils/locator.dart';
 import 'package:jojo/utils/size.config.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:jojo/pages/widgets/menu_item.dart' as mw;
+import 'package:jojo/utils/menu.items.dart';
 
 enum TypeVehicule { Petit, Moyen, Grand }
 
@@ -88,6 +90,15 @@ class _DemenagementState extends State<Demenagement> {
     delivery.stopCity = '';
     delivery.stopLat = '';
     delivery.stopLng = '';
+
+    if(currentUser.id == 0) {
+      delivery.userId = 0;
+      delivery.userEmail = '';
+    }
+    else {
+      delivery.userId = currentUser.id;
+      delivery.userEmail = currentUser.email;
+    }
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -140,7 +151,7 @@ class _DemenagementState extends State<Demenagement> {
         return null;
       },
       onSaved: (String? value) {
-        _lieuDepart = value!;
+        //_lieuDepart = value!;
       },
     );
   }
@@ -192,7 +203,7 @@ class _DemenagementState extends State<Demenagement> {
         return null;
       },
       onSaved: (String? value) {
-        _lieuDestination = value!;
+        //_lieuDestination = value!;
       },
     );
   }
@@ -300,7 +311,7 @@ class _DemenagementState extends State<Demenagement> {
       //width: 170,
       width: size.width * 0.34,
       child: DropdownButtonFormField(
-        value: _valueVehicule,
+        value: delivery.carNumber.toString(),
         items: _nbreVehicule
             .map((e) => DropdownMenuItem(
                   child: Text(e),
@@ -309,10 +320,10 @@ class _DemenagementState extends State<Demenagement> {
             .toList(),
         onChanged: (val) {
           setState(() {
-            printError("val $val");
-            _valueVehicule = val as String;
-            delivery.carNumber = int.parse(val);
-            printError("text: ${delivery.carNumber}");
+            //printError("val $val");
+            //_valueVehicule = val as String;
+            delivery.carNumber = int.parse(val as String);
+            //printError("text: ${delivery.carNumber}");
           });
         },
         icon: const Icon(
@@ -337,7 +348,7 @@ class _DemenagementState extends State<Demenagement> {
       //width: 150,
       width: size.width * 0.34,
       child: DropdownButtonFormField(
-        value: _valueTrajet,
+        value: delivery.routeNumber.toString(),
         items: _nbreTrajet
             .map((e) => DropdownMenuItem(
                   child: Text(e),
@@ -346,8 +357,8 @@ class _DemenagementState extends State<Demenagement> {
             .toList(),
         onChanged: (val) {
           setState(() {
-            _valueTrajet = val as String;
-            delivery.routeNumber = int.parse(val);
+            //_valueTrajet = val as String;
+            delivery.routeNumber = int.parse(val as String);
           });
         },
         icon: const Icon(
@@ -403,10 +414,10 @@ class _DemenagementState extends State<Demenagement> {
       ),
       onSaved: (String? arret) {
         if(arret == null){
-          _lieuArret = 'Pas de stop';
+          //_lieuArret = 'Pas de stop';
         }else{
-          _lieuArret = arret;
-          print(_lieuArret);
+          //_lieuArret = arret;
+          //print(_lieuArret);
         }
         
       },
@@ -576,7 +587,7 @@ late List<Voiture> _chipsList = [
   Widget _TypeDeMaison() {
     return SizedBox(
       child: DropdownButtonFormField(
-        value: _valueMaisons,
+        value: delivery.house,
         items: _Maisons
             .map((e) => DropdownMenuItem(
           child: Text(e),
@@ -585,9 +596,9 @@ late List<Voiture> _chipsList = [
             .toList(),
         onChanged: (val) {
           setState(() {
-            _valueMaisons = val as String;
+            //_valueMaisons = val as String;
             //print(_valueMaisons);
-            delivery.house = val;
+            delivery.house = val as String;
           });
         },
         icon: const Icon(
@@ -609,7 +620,7 @@ late List<Voiture> _chipsList = [
   Widget _NbreDePieces() {
     return SizedBox(
       child: DropdownButtonFormField(
-        value: _valuePieces,
+        value: delivery.bedroomsNumber.toString(),
         items: _NbrePiece
             .map((e) => DropdownMenuItem(
           child: Text(e),
@@ -621,7 +632,7 @@ late List<Voiture> _chipsList = [
             _valuePieces = val as String;
             //print(_valuePieces);
             //printWarning("Nombre de pieces: ${_valuePieces}");
-            delivery.bedroomsNumber = int.parse(val);
+            delivery.bedroomsNumber = int.parse(val as String);
           });
         },
         icon: const Icon(
@@ -655,7 +666,7 @@ late List<Voiture> _chipsList = [
                   GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
                 ),
                 onSaved: (String? code) {
-                  _codePromo = code!;
+                  //_codePromo = code!;
                 },
                 maxLength: 6,
               ),
@@ -673,15 +684,15 @@ late List<Voiture> _chipsList = [
             child: ElevatedButton(
               onPressed: isLoading ? null : () async {
                 if(voucherController.text != '' && voucherController.text.length == 6) {
-                  _codePromo = voucherController.text.toUpperCase();
-                  Voucher voucher = await checkVoucher(_codePromo);
+                  //_codePromo = voucherController.text.toUpperCase();
+                  Voucher voucher = await checkVoucher(voucherController.text);
                   if(voucher.id != 0) {
                     //printWarning("ACTIVE VOUCHER: $_codePromo");
                     reduction = voucher.value;
-                    delivery.voucher = _codePromo;
+                    delivery.voucher = voucherController.text;
                   }
                   else {
-                    _codePromo = voucherController.text = '';
+                    delivery.voucher = voucherController.text = '';
                   }
                 }
               },
@@ -880,8 +891,8 @@ late List<Voiture> _chipsList = [
     else {
       _formKey.currentState!.save();
       try {
-        delivery.userId = currentUser.id;
-        delivery.userEmail = currentUser.email;
+        //delivery.userId = currentUser.id;
+        //delivery.userEmail = currentUser.email;
         delivery.contactName = nameController.text;
         delivery.contactPhone = phoneController.text;
         delivery.departCity = lieuDepartController.text;

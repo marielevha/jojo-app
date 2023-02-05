@@ -7,6 +7,7 @@ import 'package:jojo/pages/splash.dart';
 import 'package:get/get.dart';
 import 'package:jojo/services/hive/hive_service.dart';
 import 'package:jojo/utils/constants.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/locator.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -37,12 +38,16 @@ void main() async {
 
   //User exist?
   if (!await hiveService.isExists(boxName: hiveUserTableName)) {
+    printWarning("User table not exist");
     await hiveService.createBox(boxName: hiveUserTableName);
   }
   else {
+    printWarning("User table exist");
     final userBox = await Hive.openBox(hiveUserTableName);
     if(userBox.isNotEmpty) {
+      printWarning("User table not empty");
       if(userBox.length >= 2) {
+        printWarning("User table 2 data");
         initialRoute = routeHome;
         currentUser = userBox.getAt((userBox.length - 1)) as User;
       }

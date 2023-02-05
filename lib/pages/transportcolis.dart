@@ -84,6 +84,15 @@ class _TransportColisState extends State<TransportColis> {
     delivery.stopCity = '';
     delivery.stopLat = '';
     delivery.stopLng = '';
+
+    if(currentUser.id == 0) {
+      delivery.userId = 0;
+      delivery.userEmail = '';
+    }
+    else {
+      delivery.userId = currentUser.id;
+      delivery.userEmail = currentUser.email;
+    }
   }
 
   @override
@@ -142,7 +151,7 @@ class _TransportColisState extends State<TransportColis> {
         return null;
       },
       onSaved: (String? value) {
-        _lieuDepart = value!;
+        //_lieuDepart = value!;
       },
     );
   }
@@ -194,7 +203,7 @@ class _TransportColisState extends State<TransportColis> {
         return null;
       },
       onSaved: (String? value) {
-        _lieuDestination = value!;
+        //_lieuDestination = value!;
       },
     );
   }
@@ -240,10 +249,11 @@ class _TransportColisState extends State<TransportColis> {
           labelText: "Ajouter un stop en cours de trajet"),
       onSaved: (String? arret) {
         if(arret == null){
-          _lieuArret = 'Pas de stop';
-        }else{
-          _lieuArret = arret;
-          print(_lieuArret);
+          //_lieuArret = 'Pas de stop';
+        }
+        else{
+          //_lieuArret = arret;
+          //print(_lieuArret);
         }
 
       },
@@ -382,7 +392,7 @@ class _TransportColisState extends State<TransportColis> {
       //width: 170,
       width: size.width * 0.34,
       child: DropdownButtonFormField(
-        value: _valueVehicule,
+        value: delivery.carNumber.toString(),
         items: _nbreVehicule
             .map((e) => DropdownMenuItem(
           child: Text(e),
@@ -391,10 +401,10 @@ class _TransportColisState extends State<TransportColis> {
             .toList(),
         onChanged: (val) {
           setState(() {
-            printError("val $val");
-            _valueVehicule = val as String;
-            delivery.carNumber = int.parse(val);
-            printError("text: ${delivery.carNumber}");
+            //printError("val $val");
+            //_valueVehicule = val as String;
+            delivery.carNumber = int.parse(val as String);
+            //printError("text: ${delivery.carNumber}");
           });
         },
         icon: const Icon(
@@ -418,7 +428,7 @@ class _TransportColisState extends State<TransportColis> {
       //width: 150,
       width: size.width * 0.34,
       child: DropdownButtonFormField(
-        value: _valueTrajet,
+        value: delivery.routeNumber.toString(),
         items: _nbreTrajet
             .map((e) => DropdownMenuItem(
           child: Text(e),
@@ -427,8 +437,8 @@ class _TransportColisState extends State<TransportColis> {
             .toList(),
         onChanged: (val) {
           setState(() {
-            _valueTrajet = val as String;
-            delivery.routeNumber = int.parse(val);
+            //_valueTrajet = val as String;
+            delivery.routeNumber = int.parse(val as String);
           });
         },
         icon: const Icon(
@@ -462,7 +472,7 @@ class _TransportColisState extends State<TransportColis> {
                       GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
                 ),
                 onSaved: (String? poids) {
-                  _nbrePoid = poids!;
+                  //_nbrePoid = poids!;
                   delivery.weightPackages = weightController.text;
                 },
                 onChanged: (String? poids) {
@@ -503,11 +513,11 @@ class _TransportColisState extends State<TransportColis> {
             border: OutlineInputBorder(),
           ),
           onSaved: (String? liste) {
-            _listeColis = liste!;
+            //_listeColis = liste!;
             delivery.packages = packagesController.text.trim();
           },
           onChanged: (String? liste) {
-            _listeColis = liste!;
+            //_listeColis = liste!;
             delivery.packages = packagesController.text.trim();
           },
         ),
@@ -604,7 +614,7 @@ class _TransportColisState extends State<TransportColis> {
                 for (int index = 0; index < select.length; index++) {
                   if (index == newIndex) {
                     select[index] = true;
-                    _voiture = _typeVoiture[index];
+                    //_voiture = _typeVoiture[index];
                     carTypeController.text = _typeVoiture[index];
 
                     //printWarning("CAR TYPE: ${carTypeController.text}");
@@ -641,7 +651,7 @@ class _TransportColisState extends State<TransportColis> {
                   GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
                 ),
                 onSaved: (String? code) {
-                  _codePromo = code!;
+                  //_codePromo = code!;
                 },
                 maxLength: 6,
               ),
@@ -659,15 +669,15 @@ class _TransportColisState extends State<TransportColis> {
             child: ElevatedButton(
               onPressed: isLoading ? null : () async {
                 if(voucherController.text != '' && voucherController.text.length == 6) {
-                  _codePromo = voucherController.text.toUpperCase();
-                  Voucher voucher = await checkVoucher(_codePromo);
+                  //_codePromo = voucherController.text.toUpperCase();
+                  Voucher voucher = await checkVoucher(voucherController.text.toUpperCase());
                   if(voucher.id != 0) {
-                    printWarning("ACTIVE VOUCHER: $_codePromo");
+                    //printWarning("ACTIVE VOUCHER: $_codePromo");
                     reduction = voucher.value;
-                    delivery.voucher = _codePromo;
+                    delivery.voucher = voucherController.text.toUpperCase();
                   }
                   else {
-                    _codePromo = voucherController.text = '';
+                    delivery.voucher = voucherController.text = '';
                   }
                 }
               },
@@ -715,7 +725,7 @@ class _TransportColisState extends State<TransportColis> {
           },
           onSaved: (String? nom) {
             //printWarning("Contact name: ${nameController.text}");
-            _nomPrenom = nom!;
+            //_nomPrenom = nom!;
             delivery.contactName = nameController.text.trim();
           },
           onChanged: (String? nom) {
@@ -757,7 +767,7 @@ class _TransportColisState extends State<TransportColis> {
         },
         onSaved: (String? value) {
           //printWarning("Contact phone: ${phoneController.text}");
-          _numero = value!;
+          //_numero = value!;
           delivery.contactPhone = phoneController.text.trim();
         },
         onChanged: (String? value) {
@@ -902,8 +912,8 @@ class _TransportColisState extends State<TransportColis> {
       printWarning("Valid! ${natureController.text}");
       _formKey.currentState!.save();
       try {
-        delivery.userId = currentUser.id;
-        delivery.userEmail = currentUser.email;
+        //delivery.userId = currentUser.id;
+        //delivery.userEmail = currentUser.email;
         delivery.contactName = nameController.text;
         delivery.contactPhone = phoneController.text;
         delivery.naturePackages = natureController.text;

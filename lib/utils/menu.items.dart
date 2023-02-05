@@ -8,7 +8,18 @@ class MenuItems {
     itemProfil,
     itemShare
   ];
-  
+
+  static const List<MenuItem> menuWithConnection = [
+    itemCourse,
+    itemProfil,
+    itemShare
+  ];
+
+  static const List<MenuItem> menuWithoutConnection = [
+    itemShare,
+    itemConnection
+  ];
+
   static const itemCourse = MenuItem(
     text: 'Mes courses',
     icon: FontAwesomeIcons.truckFast,
@@ -22,5 +33,10 @@ class MenuItems {
   static const itemShare = MenuItem(
     text: 'Partager',
     icon: FontAwesomeIcons.share,
+  );
+
+  static const itemConnection = MenuItem(
+    text: 'Se connecter',
+    icon: FontAwesomeIcons.user,
   );
 }

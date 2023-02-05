@@ -61,10 +61,10 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
-                    "Lieu d'enlèvement:",
+                    "Lieu d'enlèvement :",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
@@ -83,10 +83,10 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              delivery.stopCity?.trim() != '' ? Wrap(
                 children: [
                   Text(
-                    "Lieu de stop:",
+                    "Lieu de stop :",
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
@@ -101,11 +101,11 @@ class _DetailPageState extends State<DetailPage> {
                             fontSize: 18, fontWeight: FontWeight.w300)),
                   ),
                 ],
-              ),
-              SizedBox(
+              ) : Container(),
+              delivery.stopCity?.trim() != '' ? SizedBox(
                 height: 20,
-              ),
-              Row(
+              ) : Container(),
+              Wrap(
                 children: [
                   Text(
                     "Lieu de destination :",
@@ -127,7 +127,7 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   Row(
                     children: [
@@ -175,7 +175,7 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
                     "Nombre de vehicule :",
@@ -197,7 +197,7 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
                     "Nombre de trajet :",
@@ -219,7 +219,7 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
                     "Type de camion :",
@@ -241,6 +241,78 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 20,
               ),
+              delivery.naturePackages?.trim() != '' ? Wrap(
+                children: [
+                  Text(
+                    "Nature colis :",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "${delivery.naturePackages}",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w300)),
+                  ),
+                ],
+              ) : Container(),
+              delivery.naturePackages?.trim() != '' ? SizedBox(
+                height: 20,
+              ) : Container(),
+              delivery.weightPackages?.trim() != '' ? Wrap(
+                children: [
+                  Text(
+                    "Poids :",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "${delivery.weightPackages} (kg)",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w300)),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ) : Container(),
+              delivery.weightPackages?.trim() != '' ? SizedBox(
+                height: 20,
+              ) : Container(),
+              delivery.packages?.trim() != '' ? Wrap(
+                children: [
+                  Text(
+                    "Liste de colis :",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "${delivery.packages}",
+                    style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w300)),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ) : Container(),
+              delivery.packages?.trim() != '' ? SizedBox(
+                height: 20,
+              ) : Container(),
               Text(
                 "Personne à contacter",
                 style: GoogleFonts.poppins(
@@ -250,7 +322,7 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(
                 height: 5,
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
                     "Nom & Prenoms :",
@@ -269,7 +341,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 ],
               ),
-              Row(
+              Wrap(
                 children: [
                   Text(
                     "Contact :",

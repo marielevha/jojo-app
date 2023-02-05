@@ -23,7 +23,7 @@ class DeliveryApi {
     String url = '$apiBaseUrl/deliveries';
     var headers = {
       "Accept": "application/json",
-      "Authorization": "Bearer ${currentUser.accessToken}"
+      //"Authorization": "Bearer ${currentUser.accessToken}"
     };
 
     Map<String, dynamic> depart() => {
@@ -48,6 +48,16 @@ class DeliveryApi {
       "hour": ""
     };
 
+    String userId = '';
+    if(delivery.userId != 0) {
+      userId = delivery.userId.toString();
+    }
+
+    String userEmail = '';
+    if(delivery.userEmail != '') {
+      userEmail = delivery.userEmail;
+    }
+
     var request = http.MultipartRequest('POST', Uri.parse(url))
       ..fields['depart'] = jsonEncode(depart())
       ..fields['destination'] =  jsonEncode(destination())
@@ -57,8 +67,8 @@ class DeliveryApi {
       ..fields['transaction_type'] = delivery.transactionType
       ..fields['car_type'] = delivery.carType
       ..fields['car_number'] = delivery.carNumber.toString()
-      ..fields['user_email'] = delivery.userEmail
-      ..fields['user_id'] = delivery.userId.toString()
+      ..fields['user_email'] = userEmail
+      ..fields['user_id'] = userId
       ..fields['voucher'] = delivery.voucher!
       ..fields['house'] = delivery.house ?? ''
       ..fields['bedrooms_number'] = delivery.bedroomsNumber.toString()
@@ -82,7 +92,7 @@ class DeliveryApi {
     String url = '$apiBaseUrl/deliveries';
     var headers = {
       "Accept": "application/json",
-      "Authorization": "Bearer ${currentUser.accessToken}"
+      //"Authorization": "Bearer ${currentUser.accessToken}"
     };
 
     Map<String, dynamic> depart() => {
@@ -107,6 +117,16 @@ class DeliveryApi {
       "hour": ""
     };
 
+    String userId = '';
+    if(delivery.userId != 0) {
+      userId = delivery.userId.toString();
+    }
+
+    String userEmail = '';
+    if(delivery.userEmail != '') {
+      userEmail = delivery.userEmail;
+    }
+
     var request = http.MultipartRequest('POST', Uri.parse(url))
       ..fields['depart'] = jsonEncode(depart())
       ..fields['destination'] =  jsonEncode(destination())
@@ -119,8 +139,8 @@ class DeliveryApi {
       ..fields['transaction_type'] = delivery.transactionType
       ..fields['car_type'] = delivery.carType
       ..fields['car_number'] = delivery.carNumber.toString()
-      ..fields['user_email'] = delivery.userEmail
-      ..fields['user_id'] = delivery.userId.toString()
+      ..fields['user_email'] = userEmail
+      ..fields['user_id'] = userId
       ..fields['voucher'] = delivery.voucher!
       ..fields['route_number'] = delivery.routeNumber.toString();
 
