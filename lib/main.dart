@@ -36,6 +36,8 @@ void main() async {
   //Init hive service
   final HiveService hiveService = locator<HiveService>();
 
+
+  printInfo("Current1: ${currentUser.id}");
   //User exist?
   if (!await hiveService.isExists(boxName: hiveUserTableName)) {
     printWarning("User table not exist");
@@ -50,6 +52,7 @@ void main() async {
         printWarning("User table 2 data");
         initialRoute = routeHome;
         currentUser = userBox.getAt((userBox.length - 1)) as User;
+        printInfo("Current2: ${currentUser.id}");
       }
       else {
         initialRoute = routeLogin;

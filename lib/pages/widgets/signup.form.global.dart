@@ -4,11 +4,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupFormGlobal extends StatefulWidget {
-  const SignupFormGlobal({super.key, required this.controller, required this.text, required this.textInputType, required this.obscure});
+  const SignupFormGlobal({super.key, required this.controller, required this.text, required this.textInputType, required this.obscure, this.validator});
   final TextEditingController controller;
   final String text;
   final TextInputType textInputType;
   final bool obscure;
+  final dynamic validator;
 
   @override
   State<SignupFormGlobal> createState() => _SignupFormGlobalState();
@@ -29,6 +30,7 @@ class _SignupFormGlobalState extends State<SignupFormGlobal> {
       ),],
       ),
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: widget.controller,
         keyboardType: widget.textInputType,
         obscureText: widget.obscure,
@@ -42,6 +44,7 @@ class _SignupFormGlobalState extends State<SignupFormGlobal> {
               )
             )
         ),
+        validator: widget.validator,
       ),
     );
   }

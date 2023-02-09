@@ -56,6 +56,7 @@ class _EditProfilState extends State<EditProfil> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar:AppBar(
         backgroundColor: GlobalColors.bluecolor,
@@ -91,46 +92,52 @@ class _EditProfilState extends State<EditProfil> {
                   buildTextField(labelText: "Pays", placeholder: currentUser.country, isPasswordTextField: false, controller: countryController),
                   buildTextField(labelText: "Mot de passe", placeholder: "********", isPasswordTextField: true, controller: passwordController),
                   const SizedBox(height: 35),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      OutlinedButton(
-                        onPressed: (){
-                          Navigator.of(context).pop(currentUser);
-                        },
-                        child: Text(
-                          "Annuler",
-                          style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
-                                  fontSize: 15,
-                                  letterSpacing: 2,
-                                  color: Colors.black
-                              )
+                      SizedBox(
+                        width: size.width * 0.5,
+                        child: OutlinedButton(
+                          onPressed: (){
+                            Navigator.of(context).pop(currentUser);
+                          },
+                          child: Text(
+                            "Annuler",
+                            style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    fontSize: 15,
+                                    letterSpacing: 2,
+                                    color: Colors.black
+                                )
+                            ),
                           ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                          style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal: 50),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                          ),
                         ),
                       ),
 
-                      ElevatedButton(
-                        onPressed: () async {
-                          await updateUser();
-                        },
-                        child: Text(
-                          "Modifier",
-                          style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
-                                fontSize: 15,
-                                letterSpacing: 2,
-                                color: Colors.white,
-                              )
-                          ),),
-                        style: ElevatedButton.styleFrom(
-                            primary: GlobalColors.bluecolor,
-                            padding: EdgeInsets.symmetric(horizontal: 50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                      SizedBox(
+                        width: size.width * 0.5,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await updateUser();
+                          },
+                          child: Text(
+                            "Modifier",
+                            style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                  fontSize: 15,
+                                  letterSpacing: 2,
+                                  color: Colors.white,
+                                )
+                            ),),
+                          style: ElevatedButton.styleFrom(
+                              primary: GlobalColors.bluecolor,
+                              padding: EdgeInsets.symmetric(horizontal: 50),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                          ),
                         ),
                       )
                     ],

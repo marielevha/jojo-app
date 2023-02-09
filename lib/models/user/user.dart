@@ -13,6 +13,7 @@ class User {
   late String email;
   @HiveField(4)
   late String password;
+  late String confirmPassword;
   @HiveField(5)
   late String accessToken;
   @HiveField(6)
@@ -21,6 +22,10 @@ class User {
   late String lastName;
   @HiveField(8)
   late String country;
+  /*@HiveField(9)
+  late String region;
+  @HiveField(10)
+  late String city;*/
   @HiveField(9)
   late String profile;
 
@@ -36,6 +41,8 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.country,
+    //required this.region,
+    //required this.city,
     required this.profile,
   });
 
@@ -64,6 +71,8 @@ class User {
       accessToken: json['token'],
       phone: json['phone'],
       country: json['country'],
+      //region: json['region'],
+      //city: json['city'],
       password: '',
       profile: json['profile'],
     );

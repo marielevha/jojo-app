@@ -47,6 +47,7 @@ class UserApi {
 
   register({required User user}) async {
     String url = '$apiBaseUrl/auth/register';
+    printWarning(url);
 
     var request = http.MultipartRequest('POST', Uri.parse(url))
       ..fields['first_name'] = user.firstName
@@ -56,14 +57,23 @@ class UserApi {
       ..fields['country'] = user.country
       ..fields['email'] = user.email
       ..fields['password'] = user.password
-      ..fields['password_confirmation'] = user.password;
+      ..fields['password_confirmation'] = user.confirmPassword;
 
     var response = await request.send();
     printWarning(response.statusCode);
-    if (response.statusCode == 201) {
+    /*if (response.statusCode == 201) {
       var respStr = await response.stream.bytesToString();
       RegisterResponse registerResponse = RegisterResponse.fromJson(jsonDecode(respStr));
       return registerResponse.user;
+    }
+    else if (response.statusCode == 401) {
+      return response;
+    }*/
+
+    if (response.statusCode == 201 || response.statusCode == 401) {
+      //var respStr = await response.stream.bytesToString();
+      //RegisterResponse registerResponse = RegisterResponse.fromJson(jsonDecode(respStr));
+      return response;
     }
     else {
       throw response;
@@ -215,6 +225,25 @@ class UserApi {
     }
   }
 
+  requestResetPassword({required String email}) async {
+    final headers = {
+      "Accept": "application/json",
+    };
+    String url = '$apiBaseUrl/auth/resetPasswordRequest';
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..fields['email'] = email;
+    request.headers.addAll(headers);
+
+    var response = await request.send();
+    printWarning("Status: ${response.statusCode}");
+    if (response.statusCode == 200 || response.statusCode == 404) {
+      var respStr = await response.stream.bytesToString();
+      var rep = jsonDecode(respStr);
+      return rep;
+    }
+    throw response;
+  }
+
   resetPassword({ required String code, required String password, required String confirmPassword }) async {
     final headers = {
       "Accept": "application/json",
@@ -224,24 +253,6 @@ class UserApi {
       ..fields['reset_code'] = code
       ..fields['password'] = password
       ..fields['password_confirmation'] = confirmPassword;
-    request.headers.addAll(headers);
-
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      var respStr = await response.stream.bytesToString();
-      var rep = jsonDecode(respStr);
-      return rep;
-    }
-    throw response;
-  }
-
-  requestResetPassword({required String email}) async {
-    final headers = {
-      "Accept": "application/json",
-    };
-    String url = '$apiBaseUrl/auth/resetPasswordRequest';
-    var request = http.MultipartRequest('POST', Uri.parse(url))
-      ..fields['email'] = email;
     request.headers.addAll(headers);
 
     var response = await request.send();
@@ -292,6 +303,8 @@ class UserApi {
     user.firstName = '';
     user.lastName = '';
     user.country = '';
+    //user.region = '';
+    //user.city = '';
     user.profile = '';
     user.password = '';
     user.accessToken = '';

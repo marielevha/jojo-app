@@ -1,15 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jojo/models/delivery/delivery.dart';
 import 'package:jojo/models/voucher/voucher.dart';
 import 'package:jojo/pages/home.dart';
-import 'package:jojo/pages/maps/location.screen.dart';
-import 'package:jojo/pages/widgets/form.validate.dart';
 import 'package:jojo/services/api/delivery.api.dart';
 import 'package:jojo/utils/constants.dart';
 import 'package:jojo/utils/functions.dart';
@@ -21,8 +17,6 @@ import 'package:jojo/utils/locator.dart';
 import 'package:jojo/utils/size.config.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
-import 'package:jojo/pages/widgets/menu_item.dart' as mw;
-import 'package:jojo/utils/menu.items.dart';
 
 enum TypeVehicule { Petit, Moyen, Grand }
 
@@ -910,6 +904,7 @@ late List<Voiture> _chipsList = [
               "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
               type: QuickAlertType.success,
               confirmBtnText: "Ok",
+              confirmBtnColor: GlobalColors.bluecolor,
               onConfirmBtnTap: () {
                 Navigator.pop(context);
               },

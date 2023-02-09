@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jojo/models/delivery/delivery.dart';
 import 'package:jojo/pages/home.dart';
 import 'package:jojo/services/api/delivery.api.dart';
@@ -16,7 +15,6 @@ import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:jojo/models/voucher/voucher.dart';
 import 'package:jojo/utils/functions.dart';
-import 'package:jojo/pages/maps/location.screen.dart';
 
 
 class TransportColis extends StatefulWidget {
@@ -85,6 +83,7 @@ class _TransportColisState extends State<TransportColis> {
     delivery.stopLat = '';
     delivery.stopLng = '';
 
+    printInfo("Current3: ${currentUser.id}");
     if(currentUser.id == 0) {
       delivery.userId = 0;
       delivery.userEmail = '';
@@ -466,6 +465,7 @@ class _TransportColisState extends State<TransportColis> {
             children: [
               TextFormField(
                 controller: weightController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: 'poids',
                   hintStyle:
@@ -922,6 +922,8 @@ class _TransportColisState extends State<TransportColis> {
         delivery.departCity = lieuDepartController.text;
         delivery.destinationCity = lieuDestinationController.text;
         delivery.stopCity = lieuStopController.text;
+
+        printWarning("ID: ${delivery.userId}, EMAIL: ${delivery.userEmail}");
         await createDelivery(delivery);
         printWarning("Created");
 
@@ -934,6 +936,7 @@ class _TransportColisState extends State<TransportColis> {
               "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
               type: QuickAlertType.success,
               confirmBtnText: "Ok",
+              confirmBtnColor: GlobalColors.bluecolor,
               onConfirmBtnTap: () {
                 Navigator.pop(context);
               },

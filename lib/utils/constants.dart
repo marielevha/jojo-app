@@ -7,6 +7,7 @@ const String appEmail = 'contact@jojo.com';
 const String appDefaultUserName = 'Jojo Star';
 const apiBaseUrl = 'http://www.backend.jojo-logistic.com/api';
 //const apiBaseUrl = 'http://192.168.1.183:8000/api';
+//const apiBaseUrl = 'http://192.168.3.39:8000/api';
 const apiResponseSize = 12;
 String currentToken = '';
 User currentUser = User.initId(0);
