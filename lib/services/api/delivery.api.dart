@@ -209,7 +209,7 @@ class DeliveryApi {
 
     var headers = {
       "Accept": "application/json",
-      "Authorization": "Bearer ${currentUser.accessToken}"
+      //"Authorization": "Bearer ${currentUser.accessToken}"
     };
 
     try {

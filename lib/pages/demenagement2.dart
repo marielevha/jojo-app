@@ -1,36 +1,41 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jojo/models/delivery/delivery.dart';
+import 'package:jojo/models/voucher/voucher.dart';
 import 'package:jojo/pages/home.dart';
 import 'package:jojo/pages/home2.dart';
 import 'package:jojo/services/api/delivery.api.dart';
 import 'package:jojo/utils/constants.dart';
-import 'package:jojo/utils/locator.dart';
-import 'package:quickalert/quickalert.dart';
+import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:jojo/models/voucher/voucher.dart';
-import 'package:jojo/utils/functions.dart';
+import 'package:jojo/utils/locator.dart';
+import 'package:jojo/utils/size.config.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class TransportColis extends StatefulWidget {
-  const TransportColis({super.key});
+enum TypeVehicule { Petit, Moyen, Grand }
+
+class Demenagement2 extends StatefulWidget {
+  const Demenagement2({super.key});
 
   @override
-  State<TransportColis> createState() => _TransportColisState();
+  State<Demenagement2> createState() => _Demenagement2State();
 }
 
 class Voiture {
   String label;
   Color color;
-  Voiture(this.label, this.color);
+  Image image;
+  Voiture(this.label, this.color, this.image);
 }
 
-class _TransportColisState extends State<TransportColis> {
+class _Demenagement2State extends State<Demenagement2> {
   final DeliveryApi deliveryApi = locator<DeliveryApi>();
 
   bool isLoading = false;
@@ -44,9 +49,6 @@ class _TransportColisState extends State<TransportColis> {
   final TextEditingController lieuDestinationController =
       TextEditingController();
   final TextEditingController voucherController = TextEditingController();
-  final TextEditingController weightController = TextEditingController();
-  final TextEditingController natureController = TextEditingController();
-  final TextEditingController packagesController = TextEditingController();
   late final TextEditingController dateController = TextEditingController();
   late final TextEditingController hourController = TextEditingController();
   final TextEditingController carTypeController = TextEditingController();
@@ -61,10 +63,10 @@ class _TransportColisState extends State<TransportColis> {
     delivery.voucher = '';
     delivery.routeNumber = 1;
     delivery.carNumber = 1;
-    delivery.carType = "Baché";
-    //delivery.house = '';
-    //delivery.bedroomsNumber = 0;
-    delivery.transactionType = kTransactionTypeTwo;
+    delivery.carType = "Petit";
+    delivery.house = 'Appartement';
+    delivery.bedroomsNumber = 1;
+    delivery.transactionType = kTransactionTypeOne;
     delivery.departDate = '';
     delivery.departHour = '';
     delivery.departCity = '';
@@ -83,7 +85,6 @@ class _TransportColisState extends State<TransportColis> {
     delivery.stopLat = '';
     delivery.stopLng = '';
 
-    printInfo("Current3: ${currentUser.id}");
     if (currentUser.id == 0) {
       delivery.userId = 0;
       delivery.userEmail = '';
@@ -93,53 +94,47 @@ class _TransportColisState extends State<TransportColis> {
     }
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-///////////////////////////Lieu d'enlevement////////////////////////
+
+  ///////////////////////////Lieu d'enlevement////////////////////////
   late final String _lieuDepart;
   Widget _buildLieuDepart() {
     return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: lieuDepartController,
       decoration: InputDecoration(
           /*suffixIcon: IconButton(
-              onPressed: () async {
-                //Open map
-                printWarning("Open map depart");
-                var location = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
-                );
-                if(location != null) {
-                  location as LatLng;
-                  delivery.departLat = location.latitude.toString();
-                  delivery.departLng = location.longitude.toString();
+          onPressed: () async {
+            //Open map
+            printWarning("Open map depart");
+            var location = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+            );
+            if(location != null) {
+              location as LatLng;
+              delivery.departLat = location.latitude.toString();
+              delivery.departLng = location.longitude.toString();
 
-                  Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
+              Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
 
-                  setState(() {
-                    lieuDepartController.text = "${placeMark.street!}, ${placeMark.locality!}";
-                    //_lieuDepart = lieuDepartController.text.trim();
-                    delivery.departCity = lieuDepartController.text.trim();
-                  });
+              setState(() {
+                lieuDepartController.text = "${placeMark.street!}, ${placeMark.locality!}";
+                _lieuDepart = lieuDepartController.text.trim();
+                delivery.departCity = lieuDepartController.text.trim();
+              });
 
-                  //printWarning("Lieu depart: $_lieuDepart");
-                  //printWarning("Address: ${placeMark.street!} | ${placeMark.locality!}");
+              printWarning("Lieu depart: $_lieuDepart");
+              //printWarning("Address: ${placeMark.street!} | ${placeMark.locality!}");
 
 
-                }
-              },
-              icon: const Icon(
-                FontAwesomeIcons.mapLocation,
-                color: Colors.blue,
-                size: 15,
-              )
-          ),*/
+            }
+          },
+          icon: const Icon(
+              FontAwesomeIcons.mapLocation,
+              color: Colors.blue,
+              size: 15,
+            )
+        ),*/
           labelText: "Lieu d'enlevement"),
       validator: (String? value) {
         if (value!.isEmpty) {
@@ -158,7 +153,6 @@ class _TransportColisState extends State<TransportColis> {
   late final String _lieuDestination;
   Widget _buildLieuDestination() {
     return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: lieuDestinationController,
       decoration: InputDecoration(
           /*suffixIcon: IconButton(
@@ -166,8 +160,8 @@ class _TransportColisState extends State<TransportColis> {
                 //Open map
                 printWarning("Open map destination");
                 var location = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+                  context,
+                  MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
                 );
                 if(location != null) {
                   location as LatLng;
@@ -178,11 +172,11 @@ class _TransportColisState extends State<TransportColis> {
 
                   setState(() {
                     lieuDestinationController.text = "${placeMark.street!}, ${placeMark.locality!}";
-                    //_lieuDestination = lieuDestinationController.text.trim();
+                    _lieuDestination = lieuDestinationController.text.trim();
                     delivery.destinationCity = lieuDestinationController.text.trim();
                   });
 
-                  //printWarning("Lieu destination: $_lieuDestination");
+                  printWarning("Lieu destination: $_lieuDestination");
                 }
               },
               icon: const Icon(
@@ -205,63 +199,15 @@ class _TransportColisState extends State<TransportColis> {
   }
 ///////////////////////////////////////////////////////////////////////
 
-///////////////////////////Lieu d'arret////////////////////////
-  late final String _lieuArret;
-  Widget _buildLieuArret() {
-    return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      controller: lieuStopController,
-      decoration: InputDecoration(
-          /*suffixIcon: IconButton(
-              onPressed: () async {
-                //Open map
-                printWarning("Open map stop");
-                var location = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
-                );
-                if(location != null) {
-                  location as LatLng;
-                  delivery.stopLat = location.latitude.toString();
-                  delivery.stopLng = location.longitude.toString();
-
-                  Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
-
-                  setState(() {
-                    lieuStopController.text = "${placeMark.street!}, ${placeMark.locality!}";
-                    //_lieuArret = lieuStopController.text;
-                    delivery.stopCity = lieuStopController.text.trim();
-                  });
-
-                  //printWarning("Lieu stop: $_lieuArret");
-                }
-              },
-              icon: const Icon(
-                FontAwesomeIcons.mapLocation,
-                color: Colors.blue,
-                size: 15,
-              )
-          ),*/
-          labelText: "Ajouter un stop en cours de trajet"),
-      onSaved: (String? arret) {
-        if (arret == null) {
-          //_lieuArret = 'Pas de stop';
-        } else {
-          //_lieuArret = arret;
-          //print(_lieuArret);
-        }
-      },
-    );
-  }
-  ////////////////////////////////////////////////////////////////////////
-
   //////////////////////////date de depart///////////////////////////
+
   Widget _buildDate() {
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width * 0.34,
       child: TextFormField(
         controller: dateController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
             suffixIcon: Icon(
               FontAwesomeIcons.calendar,
@@ -282,8 +228,8 @@ class _TransportColisState extends State<TransportColis> {
             //printWarning("Date ${formatDate.toString()}");
             setState(() {
               dateController.text = formatDate.toString();
+              delivery.departDate = '';
               delivery.destinationDate = formatDate.toString();
-              //delivery.departDate = formatDate.toString();
             });
           } else {
             print('Date non definie');
@@ -295,7 +241,6 @@ class _TransportColisState extends State<TransportColis> {
           }
           return null;
         },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
       ),
     );
   }
@@ -326,7 +271,7 @@ class _TransportColisState extends State<TransportColis> {
             //printWarning("Date ${formatTime.toString()}");
             setState(() {
               hourController.text = formatTime;
-              //delivery.departHour = formatTime;
+              delivery.departHour = '';
               delivery.destinationHour = formatTime;
             });
           } else {
@@ -343,39 +288,6 @@ class _TransportColisState extends State<TransportColis> {
     );
   }
 ///////////////////////////////////////////////////////////////////
-
-//////////////////////////nature du colis////////////////////////
-  late final String _natureColis;
-  Widget _buildNatureColis() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: natureController,
-          decoration: InputDecoration(
-            hintText: 'Nature du colis',
-            hintStyle: GoogleFonts.poppins(),
-          ),
-          validator: (String? nature) {
-            if (nature!.isEmpty) {
-              return 'le champ est vide';
-            }
-            return null;
-          },
-          onSaved: (String? nature) {
-            //_natureColis = nature!;
-            delivery.naturePackages = natureController.text;
-          },
-          onChanged: (String? nature) {
-            //_natureColis = nature!;
-            delivery.naturePackages = natureController.text;
-          },
-        ),
-      ],
-    );
-  }
-//////////////////////////////////////////////////////////////////
 
   ///////////////////////nombre de vehicule////////////////////////
   late final List _nbreVehicule = ["1", "2", "3", "4", "5"];
@@ -447,97 +359,83 @@ class _TransportColisState extends State<TransportColis> {
   }
 /////////////////////////////////////////////////////////////////
 
-  //////////////////////////Poids////////////////////////
-  late final String _nbrePoid;
-  Widget _buildPoids() {
-    Size size = MediaQuery.of(context).size;
-    return Row(
-      children: [
-        SizedBox(
-          width: size.width * 0.5,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: weightController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: 'poids',
-                  hintStyle:
-                      GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
-                ),
-                onSaved: (String? poids) {
-                  //_nbrePoid = poids!;
-                  delivery.weightPackages = weightController.text;
-                },
-                onChanged: (String? poids) {
-                  delivery.weightPackages = weightController.text;
-                },
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: size.width * 0.15,
-        ),
-        Text(
-          "Kg",
-          style: GoogleFonts.poppins(
-              textStyle: TextStyle(
-            fontSize: 13,
-            color: Colors.grey,
-          )),
-        ),
-      ],
-    );
-  }
-//////////////////////////////////////////////////////////////////
+///////////////////////////Lieu d'arret////////////////////////
+  late final String _lieuArret;
+  Widget _buildLieuArret() {
+    return TextFormField(
+      controller: lieuStopController,
+      decoration: InputDecoration(
+          /*suffixIcon: IconButton(
+              onPressed: () async {
+                //Open map
+                printWarning("Open map stop");
+                var location = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) { return const SearchPlacesScreen(); })
+                );
+                if(location != null) {
+                  location as LatLng;
+                  delivery.stopLat = location.latitude.toString();
+                  delivery.stopLng = location.longitude.toString();
 
-//////////////////////////liste des colis////////////////////////
-  late final String _listeColis;
-  Widget _buildListeColis() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: packagesController,
-          maxLines: 20,
-          decoration: InputDecoration(
-            hintText: 'liste des colis...',
-            hintStyle: GoogleFonts.poppins(),
-            border: OutlineInputBorder(),
-          ),
-          onSaved: (String? liste) {
-            //_listeColis = liste!;
-            delivery.packages = packagesController.text.trim();
-          },
-          onChanged: (String? liste) {
-            //_listeColis = liste!;
-            delivery.packages = packagesController.text.trim();
-          },
-        ),
-      ],
+                  Placemark placeMark = await getAddressFromLatLng(context, location.latitude, location.longitude);
+
+                  setState(() {
+                    lieuStopController.text = "${placeMark.street!}, ${placeMark.locality!}";
+                    _lieuArret = lieuStopController.text;
+                    delivery.stopCity = lieuStopController.text.trim();
+                  });
+
+                  printWarning("Lieu stop: $_lieuArret");
+                }
+              },
+              icon: const Icon(
+                FontAwesomeIcons.mapLocation,
+                color: Colors.blue,
+                size: 15,
+              )
+          ),*/
+          labelText: "Ajouter un stop en cours de trajet"),
+      onSaved: (String? arret) {
+        if (arret == null) {
+          //_lieuArret = 'Pas de stop';
+        } else {
+          //_lieuArret = arret;
+          //print(_lieuArret);
+        }
+      },
     );
   }
-//////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////
 
 //////////////////////////Type de vehicule////////////////////////
-
   List<bool> select = [true, false, false];
-  List<String> _typeVoiture = ['Baché', 'Fourgonnette', 'Camion'];
-  String? _voiture = "Baché";
+  List<String> _typeVoiture = ['Petit', 'Moyen', 'Grand'];
+  late int selectedIndex = 0;
   late List<Voiture> _chipsList = [
     Voiture(
       "Petit",
       Colors.blue,
+      Image(
+        image: AssetImage('assets/images/camionpetit.png'),
+        height: 20,
+      ),
     ),
     Voiture(
       "Moyen",
       Colors.blue,
+      Image(
+        image: AssetImage('assets/images/camionmoyen.png'),
+        height: 20,
+      ),
     ),
     Voiture(
       "Grand",
       Colors.blue,
+      Image(
+        image: AssetImage('assets/images/camiongrand.png'),
+        height: 20,
+      ),
     ),
   ];
 
@@ -565,9 +463,13 @@ class _TransportColisState extends State<TransportColis> {
             splashColor: Colors.amber[700],
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
+                    Image(
+                      image: AssetImage('assets/images/camionpetit.png'),
+                      height: 40,
+                    ),
                     Text(
                       _typeVoiture[0],
                       style: GoogleFonts.poppins(
@@ -578,9 +480,13 @@ class _TransportColisState extends State<TransportColis> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
+                    Image(
+                      image: AssetImage('assets/images/camionmoyen.png'),
+                      height: 40,
+                    ),
                     Text(
                       _typeVoiture[1],
                       style: GoogleFonts.poppins(
@@ -591,9 +497,13 @@ class _TransportColisState extends State<TransportColis> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
+                    Image(
+                      image: AssetImage('assets/images/camiongrand.png'),
+                      height: 40,
+                    ),
                     Text(
                       _typeVoiture[2],
                       style: GoogleFonts.poppins(
@@ -609,7 +519,6 @@ class _TransportColisState extends State<TransportColis> {
                 for (int index = 0; index < select.length; index++) {
                   if (index == newIndex) {
                     select[index] = true;
-                    //_voiture = _typeVoiture[index];
                     carTypeController.text = _typeVoiture[index];
 
                     //printWarning("CAR TYPE: ${carTypeController.text}");
@@ -627,7 +536,123 @@ class _TransportColisState extends State<TransportColis> {
   }
 ///////////////////////////////////////////////////////////////////
 
-  //////////////////////////Code promo////////////////////////
+  //////////////////////////Personne à contacter////////////////////////
+  late final String _nomPrenom;
+  Widget _buildPersonContact() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Personne à contacter",
+          style: TextStyle(color: Colors.grey, fontSize: 20),
+        ),
+        TextFormField(
+          controller: nameController,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          decoration: InputDecoration(
+            hintText: /*currentUser != null ? currentUser.name :*/
+                'Nom & prenoms',
+            hintStyle: GoogleFonts.poppins(),
+          ),
+          validator: (String? nom) {
+            if (nom!.isEmpty) {
+              return 'le champ est vide';
+            }
+            return null;
+          },
+          onSaved: (String? nom) {
+            //printWarning("Contact name: ${nameController.text}");
+            _nomPrenom = nom!;
+            delivery.contactName = nameController.text.trim();
+          },
+          onChanged: (String? nom) {
+            //printWarning("Contact name: ${nameController.text}");
+            delivery.contactName = nameController.text.trim();
+          },
+        ),
+      ],
+    );
+  }
+//////////////////////////////////////////////////////////////////
+
+  ////////////////////////////Type de maison///////////////////////////
+  late final List _Maisons = [
+    "Appartement",
+    "Maison basse",
+    "Duplex",
+    "Triplex"
+  ];
+  late String? _valueMaisons = "Appartement";
+  Widget _TypeDeMaison() {
+    return SizedBox(
+      child: DropdownButtonFormField(
+        value: delivery.house,
+        items: _Maisons.map((e) => DropdownMenuItem(
+              child: Text(e),
+              value: e,
+            )).toList(),
+        onChanged: (val) {
+          setState(() {
+            //_valueMaisons = val as String;
+            //print(_valueMaisons);
+            delivery.house = val as String;
+          });
+        },
+        icon: const Icon(
+          Icons.arrow_drop_down_circle,
+          color: Colors.blue,
+        ),
+        decoration: InputDecoration(
+          labelText: "Type de maison",
+        ),
+      ),
+    );
+  }
+/////////////////////////////////////////////////////////////////////
+
+////////////////////////////Nombre de piece///////////////////////////
+  late final List _NbrePiece = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+  ];
+  late String? _valuePieces = "1";
+  Widget _NbreDePieces() {
+    return SizedBox(
+      child: DropdownButtonFormField(
+        value: delivery.bedroomsNumber.toString(),
+        items: _NbrePiece.map((e) => DropdownMenuItem(
+              child: Text(e),
+              value: e,
+            )).toList(),
+        onChanged: (val) {
+          setState(() {
+            _valuePieces = val as String;
+            //print(_valuePieces);
+            //printWarning("Nombre de pieces: ${_valuePieces}");
+            delivery.bedroomsNumber = int.parse(val as String);
+          });
+        },
+        icon: const Icon(
+          Icons.arrow_drop_down_circle,
+          color: Colors.blue,
+        ),
+        decoration: InputDecoration(
+          labelText: "Nombre de pièces",
+        ),
+      ),
+    );
+  }
+/////////////////////////////////////////////////////////////////////
+
+//////////////////////////Code promo////////////////////////
   late final String _codePromo;
   Widget _buildCodePromo() {
     Size size = MediaQuery.of(context).size;
@@ -668,35 +693,14 @@ class _TransportColisState extends State<TransportColis> {
                       if (voucherController.text != '' &&
                           voucherController.text.length == 6) {
                         //_codePromo = voucherController.text.toUpperCase();
-                        Voucher voucher = await checkVoucher(voucherController.text.toUpperCase());
+                        Voucher voucher =
+                            await checkVoucher(voucherController.text);
                         if (voucher.id != 0) {
                           //printWarning("ACTIVE VOUCHER: $_codePromo");
                           reduction = voucher.value;
-                          delivery.voucher = voucherController.text.toUpperCase();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Coupon validé -${reduction}% de réduction!'),
-                              action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          );
+                          delivery.voucher = voucherController.text;
                         } else {
                           delivery.voucher = voucherController.text = '';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Ce coupon n'est pas valide!"),
-                              action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          );
                         }
                       }
                     },
@@ -719,54 +723,15 @@ class _TransportColisState extends State<TransportColis> {
   }
 //////////////////////////////////////////////////////////////////
 
-//////////////////////////Personne à contacter////////////////////////
-  late final String _nomPrenom;
-  Widget _buildPersonContact() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Personne à contacter",
-          style: TextStyle(color: Colors.grey, fontSize: 20),
-        ),
-        TextFormField(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: nameController,
-          decoration: InputDecoration(
-            hintText: /*currentUser != null ? currentUser.name :*/
-                'Nom & prenoms',
-            hintStyle: GoogleFonts.poppins(),
-          ),
-          validator: (String? nom) {
-            if (nom!.isEmpty) {
-              return 'le champ est vide';
-            }
-            return null;
-          },
-          onSaved: (String? nom) {
-            //printWarning("Contact name: ${nameController.text}");
-            //_nomPrenom = nom!;
-            delivery.contactName = nameController.text.trim();
-          },
-          onChanged: (String? nom) {
-            //printWarning("Contact name: ${nameController.text}");
-            delivery.contactName = nameController.text.trim();
-          },
-        ),
-      ],
-    );
-  }
-//////////////////////////////////////////////////////////////////
-
-//////////////////////////numero de telephone/////////////////////////////////////
+  //////////////////////////numero de telephone/////////////////////////////////////
   late final String _numero;
   Widget _buildNumero() {
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: size.width * 0.85,
       child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: phoneController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
           suffixIcon: Icon(
             FontAwesomeIcons.phone,
@@ -787,7 +752,7 @@ class _TransportColisState extends State<TransportColis> {
         },
         onSaved: (String? value) {
           //printWarning("Contact phone: ${phoneController.text}");
-          //_numero = value!;
+          _numero = value!;
           delivery.contactPhone = phoneController.text.trim();
         },
         onChanged: (String? value) {
@@ -797,21 +762,23 @@ class _TransportColisState extends State<TransportColis> {
       ),
     );
   }
-  //////////////////////////////////////////////////////////////bool _isFormValid = false;
 
+  //////////////////////////////////////////////////////////////
   bool _isFormValid = false;
   bool _isFormBeingValidated = false;
-
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     Size size = MediaQuery.of(context).size;
+    double defaultSize = size.height - (size.height * 0.1);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: GlobalColors.bluecolor,
         centerTitle: true,
         excludeHeaderSemantics: true,
         title: Text(
-          "Transport de colis volumineux",
+          "Déménagement / transport de biens personnels",
           style: GoogleFonts.poppins(),
         ),
       ),
@@ -819,6 +786,8 @@ class _TransportColisState extends State<TransportColis> {
           child: ListView(
         children: <Widget>[
           Container(
+            width: size.width,
+            //height: defaultSize,
             padding: const EdgeInsets.all(30.0),
             alignment: Alignment.center,
             child: Form(
@@ -837,10 +806,6 @@ class _TransportColisState extends State<TransportColis> {
                   SizedBox(
                     height: 25,
                   ),
-                  _buildLieuArret(),
-                  SizedBox(
-                    height: 25,
-                  ),
                   Row(
                     children: <Widget>[
                       _buildDate(),
@@ -850,10 +815,6 @@ class _TransportColisState extends State<TransportColis> {
                       _buildHeure()
                     ],
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  _buildNatureColis(),
                   SizedBox(
                     height: 25,
                   ),
@@ -869,22 +830,26 @@ class _TransportColisState extends State<TransportColis> {
                   SizedBox(
                     height: 25,
                   ),
-                  _buildPoids(),
+                  _buildLieuArret(),
                   SizedBox(
-                    height: 25,
-                  ),
-                  _buildListeColis(),
-                  SizedBox(
-                    height: 25,
+                    height: 35,
                   ),
                   _buildTypeVehicule(),
                   SizedBox(
+                    height: 20,
+                  ),
+                  _TypeDeMaison(),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  _NbreDePieces(),
+                  SizedBox(
                     height: 25,
                   ),
-                  _buildCodePromo(),
+                  /*_buildCodePromo(),
                   SizedBox(
                     height: 40,
-                  ),
+                  ),*/
                   _buildPersonContact(),
                   _buildNumero(),
                   SizedBox(
@@ -906,7 +871,6 @@ class _TransportColisState extends State<TransportColis> {
                         ),
                         child: _isFormBeingValidated
                             ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   SizedBox(
@@ -957,59 +921,45 @@ class _TransportColisState extends State<TransportColis> {
       setState(() {
         _isFormBeingValidated = false;
       });
-
       if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Remplissez les champs obligatoires"),
-      ));
-    } else {
-      printWarning("Valid! ${natureController.text}");
-      _formKey.currentState!.save();
-      try {
-        //delivery.userId = currentUser.id;
-        //delivery.userEmail = currentUser.email;
-        delivery.contactName = nameController.text;
-        delivery.contactPhone = phoneController.text;
-        delivery.naturePackages = natureController.text;
-        delivery.weightPackages = weightController.text;
-        delivery.packages = packagesController.text;
-        delivery.departCity = lieuDepartController.text;
-        delivery.destinationCity = lieuDestinationController.text;
-        delivery.stopCity = lieuStopController.text;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Remplissez les champs obligatoires"),
+        ));
+      } else {
+        _formKey.currentState!.save();
+        try {
+          //delivery.userId = currentUser.id;
+          //delivery.userEmail = currentUser.email;
+          delivery.contactName = nameController.text;
+          delivery.contactPhone = phoneController.text;
+          delivery.departCity = lieuDepartController.text;
+          delivery.destinationCity = lieuDestinationController.text;
+          delivery.stopCity = lieuStopController.text;
+          await createDelivery(delivery);
+          printWarning("Created");
 
-        printWarning("ID: ${delivery.userId}, EMAIL: ${delivery.userEmail}");
-        await createDelivery(delivery);
-        printWarning("Created");
-
-        if (isCompleted) {
-          Timer(const Duration(seconds: 0), () {
-            /*if (currentUser.id == 0) {
-              Get.to(const HomePage2());
-            }
-            else {
-              Get.to(currentUser.id == 0 ? HomePage2() : HomePage());
-            }*/
-            //Get.to(currentUser.id == 0 ? const HomePage2() : const HomePage());
-            Get.to(HomePage());
-            QuickAlert.show(
-              context: context,
-              text:
-                  "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
-              type: QuickAlertType.success,
-              confirmBtnText: "Ok",
-              confirmBtnColor: GlobalColors.bluecolor,
-              onConfirmBtnTap: () {
-                Navigator.pop(context);
-              },
-            );
-          });
+          if (isCompleted) {
+            Timer(const Duration(seconds: 0), () {
+              Get.to(HomePage2());
+              QuickAlert.show(
+                context: context,
+                text:
+                    "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+                type: QuickAlertType.success,
+                confirmBtnText: "Ok",
+                confirmBtnColor: GlobalColors.bluecolor,
+                onConfirmBtnTap: () {
+                  Navigator.pop(context);
+                },
+              );
+            });
+          }
+        } catch (error) {
+          printError(error);
         }
-      } catch (error) {
-        printError("Error0: $error");
       }
-    }
     });
-    
+
     /*if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Remplissez les champs obligatoires"),
@@ -1018,7 +968,131 @@ class _TransportColisState extends State<TransportColis> {
     //else {
     //_formKey.currentState!.save();
 
+    /*print('Details du formulaire transport de colis volumineux');
+      print("Lieu d'enlevement: " + _lieuDepart);
+      print("Lieu de destination: " + _lieuDestination);
+      print("Lieu d'arret: " + _lieuArret);
+      print("Date: " + dateController.text);
+      print("Heure: " + _heure.text);
+      print("Nature du colis: " + _natureColis);
+      print('Nombre de vehicule: ' '$_valueVehicule');
+      print('Nombre de trajet: ' '$_valueTrajet');
+      print("Poids: " + _nbrePoid + " kg");
+      print("Liste des colis: " + _listeColis);
+      print("Type de camion: " + _voiture!);
+      print("Coupon: ");
+      print("Personne à contacter: " + _nomPrenom);
+      print("Numero de tel: " + _numero);*/
+
     //}
+  }
+
+  void showAlertDialogLast(BuildContext context) {
+    Widget okBtn = ElevatedButton(
+        onPressed: () async {
+          /*if (!_formKey.currentState!.validate()) {
+            return;
+          }
+          _formKey.currentState!.save();*/
+          /*FormDetails formDetails = FormDetails();
+          formDetails.lieuDeDepart = _lieuDepart;
+          formDetails.lieuDestination = _lieuDestination;
+          formDetails.dateDepart = _date.text;
+          formDetails.heureDepart = _heure.text;
+          formDetails.nombreVehicule = _valueVehicule!;
+          formDetails.nombreTrajet = _valueTrajet!;
+          formDetails.lieuDarret =_lieuArret;
+          formDetails.typeVoiture = _typeDeVoiture.text!;
+          formDetails.nomPrenom =  _nomPrenom;
+          formDetails.numero = _numero;*/
+
+          delivery.userId = currentUser.id;
+          delivery.userEmail = currentUser.email;
+          delivery.contactName = nameController.text;
+          delivery.contactPhone = phoneController.text;
+
+          delivery.departCity = lieuDepartController.text;
+          delivery.destinationCity = lieuDestinationController.text;
+          delivery.stopCity = lieuStopController.text;
+
+          printWarning(delivery.house!);
+          printWarning("${delivery.bedroomsNumber}");
+          //delivery.departHour = null;
+          //delivery.departDate = null;
+          //delivery.departCity = null;
+          //delivery.departLat = null;
+          //delivery.departLng = null;
+          printWarning("Car number: ${delivery.carNumber}");
+          //printWarning("[DELIVERY]: $delivery");
+          createDelivery(delivery);
+          /*showDialog(
+            context: context,
+            builder: (context) => FutureProgressDialog(
+              Future.delayed(Duration(seconds: 5), (){
+                Get.to(HomePage());
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Vous serez contacté dans les minutes qui suivent par nos assistants en ligne"),
+              behavior: SnackBarBehavior.floating,
+            ));
+              }),
+              message: Text("envoi du formulaire"),
+
+            ),
+          );*/
+          Timer(const Duration(seconds: 0), () {
+            Get.to(HomePage());
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Stack(clipBehavior: Clip.none, children: [
+                Container(
+                    padding: EdgeInsets.all(10),
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+                          maxLines: 5,
+                          style: GoogleFonts.poppins(
+                            textStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+              ]),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ));
+          });
+        },
+        child: Text("Confirmer"));
+
+    Widget cancelBtn = ElevatedButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text("Annuler"));
+    AlertDialog alert = AlertDialog(
+      title: Text("Confirmation du formulaire"),
+      content: Text("Êtes-vous sûr d'avoir entré les informations correctes ?"),
+      actions: [
+        okBtn,
+        cancelBtn,
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext buildercontext) {
+          return alert;
+        });
   }
 
   Future<Placemark> getAddressFromLatLng(
@@ -1043,8 +1117,7 @@ class _TransportColisState extends State<TransportColis> {
 
       try {
         //printWarning("DELIVERY: $delivery");
-        var response =
-            await deliveryApi.createDeliveryPackage(delivery: delivery);
+        var response = await deliveryApi.createDelivery(delivery: delivery);
         if (response == 201) {
           setState(() {
             isCompleted = true;
@@ -1052,12 +1125,12 @@ class _TransportColisState extends State<TransportColis> {
           });
           printWarning("DELIVERY CREATED");
         }
+        //return delivery;
       } catch (err) {
         setState(() {
           isLoading = false;
         });
-        //printError(err);
-        printError("Error1: $err");
+        printError(err);
       }
     } else {
       /*showToast(

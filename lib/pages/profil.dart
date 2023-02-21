@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jojo/models/user/user.dart';
+import 'package:jojo/pages/contrat.dart';
 import 'package:jojo/pages/courses.dart';
 import 'package:jojo/pages/editprofil.dart';
 import 'package:jojo/pages/login.dart';
+import 'package:jojo/pages/politique.dart';
 import 'package:jojo/services/api/user.api.dart';
 import 'package:jojo/utils/constants.dart';
 import 'package:jojo/utils/functions.dart';
@@ -123,23 +123,33 @@ class _ProfilState extends State<Profil> {
                   textColor: Colors.black,
                 ),
                 ProfileMenuWidget(
-                  title: "Contrat de licence",
+                  title: "Conditions generales",
                   icons: LineAwesomeIcons.file_contract,
-                  onPress: () {},
+                  onPress: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return Contrat(mdFileName: 'conditions_de_service.md',);
+                    }));
+                  },
                   textColor: Colors.black,
                 ),
                 ProfileMenuWidget(
                   title: "Politique de confidentialité",
                   icons: LineAwesomeIcons.balance_scale,
-                  onPress: () {},
+                  onPress: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return Politique(mdFileName: 'politique_de_confidentialite.md',);
+                    }));
+                  },
                   textColor: Colors.black,
                 ),
-                ProfileMenuWidget(
+                /*ProfileMenuWidget(
                   title: "Partenaires",
                   icons: LineAwesomeIcons.handshake,
                   onPress: () {},
                   textColor: Colors.black,
-                ),
+                ),*/
                 const SizedBox(
                   height: 30,
                 ),
@@ -155,10 +165,25 @@ class _ProfilState extends State<Profil> {
                   title: "Deconnexion",
                   icons: LineAwesomeIcons.alternate_sign_out,
                   onPress: () {
-                    setState(() {
-                      isLoading = !isLoading;
-                    });
-                    logout(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Deconnexion"),
+                        content: Text("Vous allez mettre fin à votre session."),
+                        actions:[
+                          TextButton(
+                            onPressed: (){
+                              setState(() {
+                                isLoading = !isLoading;
+                              });
+                              logout(context);
+                            }, 
+                            child: Text("Oui")
+                          ),
+                          TextButton(onPressed: (){ Navigator.of(context).pop(false);}, child: Text("Non")),
+                        ]
+                      ),
+                    );
                     /*Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return LoginView();
@@ -166,6 +191,17 @@ class _ProfilState extends State<Profil> {
                   },
                   textColor: Colors.red,
                 ),
+                const SizedBox(
+                  height: 150,
+                ),
+                Text(
+                      'Version 1.0.0',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                            fontSize: 12, color: Colors.grey)),
+                    ),
+                
               ],
             )),
       ),

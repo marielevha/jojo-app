@@ -35,7 +35,6 @@ class Voiture {
 }
 
 class _DemenagementState extends State<Demenagement> {
-
   final DeliveryApi deliveryApi = locator<DeliveryApi>();
 
   bool isLoading = false;
@@ -46,12 +45,12 @@ class _DemenagementState extends State<Demenagement> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController lieuDepartController = TextEditingController();
   final TextEditingController lieuStopController = TextEditingController();
-  final TextEditingController lieuDestinationController = TextEditingController();
+  final TextEditingController lieuDestinationController =
+      TextEditingController();
   final TextEditingController voucherController = TextEditingController();
   late final TextEditingController dateController = TextEditingController();
   late final TextEditingController hourController = TextEditingController();
   final TextEditingController carTypeController = TextEditingController();
-
 
   @override
   void initState() {
@@ -85,11 +84,10 @@ class _DemenagementState extends State<Demenagement> {
     delivery.stopLat = '';
     delivery.stopLng = '';
 
-    if(currentUser.id == 0) {
+    if (currentUser.id == 0) {
       delivery.userId = 0;
       delivery.userEmail = '';
-    }
-    else {
+    } else {
       delivery.userId = currentUser.id;
       delivery.userEmail = currentUser.email;
     }
@@ -103,7 +101,7 @@ class _DemenagementState extends State<Demenagement> {
     return TextFormField(
       controller: lieuDepartController,
       decoration: InputDecoration(
-        /*suffixIcon: IconButton(
+          /*suffixIcon: IconButton(
           onPressed: () async {
             //Open map
             printWarning("Open map depart");
@@ -136,8 +134,7 @@ class _DemenagementState extends State<Demenagement> {
               size: 15,
             )
         ),*/
-        labelText: "Lieu d'enlevement"
-      ),
+          labelText: "Lieu d'enlevement"),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de depart est vide';
@@ -150,7 +147,6 @@ class _DemenagementState extends State<Demenagement> {
     );
   }
   ////////////////////////////////////////////////////////////////////////
-
 
   //////////////////////////Lieu de destination///////////////////////////
   late final String _lieuDestination;
@@ -188,8 +184,7 @@ class _DemenagementState extends State<Demenagement> {
                 size: 15,
               )
           ),*/
-          labelText: 'Lieu de destination'
-      ),
+          labelText: 'Lieu de destination'),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de destination est vide';
@@ -202,7 +197,6 @@ class _DemenagementState extends State<Demenagement> {
     );
   }
 ///////////////////////////////////////////////////////////////////////
-
 
   //////////////////////////date de depart///////////////////////////
 
@@ -251,7 +245,6 @@ class _DemenagementState extends State<Demenagement> {
   }
 //////////////////////////////////////////////////////////////////////
 
-
   ///////////////////////////heure de depart/////////////////////////////
   Widget _buildHeure() {
     Size size = MediaQuery.of(context).size;
@@ -295,7 +288,6 @@ class _DemenagementState extends State<Demenagement> {
   }
 ///////////////////////////////////////////////////////////////////
 
-
   ///////////////////////nombre de vehicule////////////////////////
   late final List _nbreVehicule = ["1", "2", "3", "4", "5"];
   late String? _valueVehicule = "1";
@@ -331,7 +323,6 @@ class _DemenagementState extends State<Demenagement> {
     );
   }
   ////////////////////////////////////////////////////////////////
-  
 
   /////////////////////////nombre de trajet///////////////////////
   late final List _nbreTrajet = ["1", "2", "3", "4", "5"];
@@ -366,7 +357,6 @@ class _DemenagementState extends State<Demenagement> {
     );
   }
 /////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////Lieu d'arret////////////////////////
   late final String _lieuArret;
@@ -404,27 +394,24 @@ class _DemenagementState extends State<Demenagement> {
                 size: 15,
               )
           ),*/
-          labelText: "Ajouter un stop en cours de trajet"
-      ),
+          labelText: "Ajouter un stop en cours de trajet"),
       onSaved: (String? arret) {
-        if(arret == null){
+        if (arret == null) {
           //_lieuArret = 'Pas de stop';
-        }else{
+        } else {
           //_lieuArret = arret;
           //print(_lieuArret);
         }
-        
       },
     );
   }
   ////////////////////////////////////////////////////////////////////////
-  
 
 //////////////////////////Type de vehicule////////////////////////
-List<bool> select = [true, false, false];
-List<String> _typeVoiture = ['Petit', 'Moyen', 'Grand'];
-late int selectedIndex = 0;
-late List<Voiture> _chipsList = [
+  List<bool> select = [true, false, false];
+  List<String> _typeVoiture = ['Petit', 'Moyen', 'Grand'];
+  late int selectedIndex = 0;
+  late List<Voiture> _chipsList = [
     Voiture(
       "Petit",
       Colors.blue,
@@ -451,7 +438,7 @@ late List<Voiture> _chipsList = [
     ),
   ];
 
-  Widget _buildTypeVehicule(){
+  Widget _buildTypeVehicule() {
     Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width * 0.85,
@@ -464,8 +451,8 @@ late List<Voiture> _chipsList = [
             style: TextStyle(color: Colors.grey),
           ),
           SizedBox(
-              height: 10,
-            ),
+            height: 10,
+          ),
           ToggleButtons(
             isSelected: select,
             borderColor: Colors.grey,
@@ -482,19 +469,29 @@ late List<Voiture> _chipsList = [
                       image: AssetImage('assets/images/camionpetit.png'),
                       height: 40,
                     ),
-                    Text(_typeVoiture[0], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
+                    Text(
+                      _typeVoiture[0],
+                      style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold)),
+                    ),
                   ],
                 ),
               ),
               Padding(
-                padding:const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 child: Column(
                   children: [
                     Image(
                       image: AssetImage('assets/images/camionmoyen.png'),
                       height: 40,
                     ),
-                    Text(_typeVoiture[1], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
+                    Text(
+                      _typeVoiture[1],
+                      style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold)),
+                    ),
                   ],
                 ),
               ),
@@ -506,27 +503,30 @@ late List<Voiture> _chipsList = [
                       image: AssetImage('assets/images/camiongrand.png'),
                       height: 40,
                     ),
-                    Text(_typeVoiture[2], style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),),
+                    Text(
+                      _typeVoiture[2],
+                      style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold)),
+                    ),
                   ],
                 ),
               ),
-            ], 
-            onPressed: (int newIndex){
-              
-                setState(() {
-                  for(int index = 0 ; index < select.length; index++ ){
-                    if(index == newIndex){
-                      select[index] = true;
-                      carTypeController.text = _typeVoiture[index];
+            ],
+            onPressed: (int newIndex) {
+              setState(() {
+                for (int index = 0; index < select.length; index++) {
+                  if (index == newIndex) {
+                    select[index] = true;
+                    carTypeController.text = _typeVoiture[index];
 
-                      //printWarning("CAR TYPE: ${carTypeController.text}");
-                      delivery.carType = carTypeController.text.trim();
-                    } else {
-                      select[index] = false;
-                    }
+                    //printWarning("CAR TYPE: ${carTypeController.text}");
+                    delivery.carType = carTypeController.text.trim();
+                  } else {
+                    select[index] = false;
                   }
-                });
-              
+                }
+              });
             },
           ),
         ],
@@ -535,22 +535,22 @@ late List<Voiture> _chipsList = [
   }
 ///////////////////////////////////////////////////////////////////
 
-
   //////////////////////////Personne à contacter////////////////////////
   late final String _nomPrenom;
-  Widget _buildPersonContact(){
+  Widget _buildPersonContact() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-              "Personne à contacter",
-              style: TextStyle(color: Colors.grey, fontSize: 20),
-            ),
+          "Personne à contacter",
+          style: TextStyle(color: Colors.grey, fontSize: 20),
+        ),
         TextFormField(
           controller: nameController,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
-            hintText: /*currentUser != null ? currentUser.name :*/ 'Nom & prenoms',
+            hintText: /*currentUser != null ? currentUser.name :*/
+                'Nom & prenoms',
             hintStyle: GoogleFonts.poppins(),
           ),
           validator: (String? nom) {
@@ -574,20 +574,22 @@ late List<Voiture> _chipsList = [
   }
 //////////////////////////////////////////////////////////////////
 
-
   ////////////////////////////Type de maison///////////////////////////
-  late final List _Maisons = ["Appartement", "Maison basse", "Duplex", "Triplex"];
+  late final List _Maisons = [
+    "Appartement",
+    "Maison basse",
+    "Duplex",
+    "Triplex"
+  ];
   late String? _valueMaisons = "Appartement";
   Widget _TypeDeMaison() {
     return SizedBox(
       child: DropdownButtonFormField(
         value: delivery.house,
-        items: _Maisons
-            .map((e) => DropdownMenuItem(
-          child: Text(e),
-          value: e,
-        ))
-            .toList(),
+        items: _Maisons.map((e) => DropdownMenuItem(
+              child: Text(e),
+              value: e,
+            )).toList(),
         onChanged: (val) {
           setState(() {
             //_valueMaisons = val as String;
@@ -607,20 +609,28 @@ late List<Voiture> _chipsList = [
   }
 /////////////////////////////////////////////////////////////////////
 
-
 ////////////////////////////Nombre de piece///////////////////////////
-  late final List _NbrePiece = ["1", "2", "3", "4","5","6","7","8","9","10"];
+  late final List _NbrePiece = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+  ];
   late String? _valuePieces = "1";
   Widget _NbreDePieces() {
     return SizedBox(
       child: DropdownButtonFormField(
         value: delivery.bedroomsNumber.toString(),
-        items: _NbrePiece
-            .map((e) => DropdownMenuItem(
-          child: Text(e),
-          value: e,
-        ))
-            .toList(),
+        items: _NbrePiece.map((e) => DropdownMenuItem(
+              child: Text(e),
+              value: e,
+            )).toList(),
         onChanged: (val) {
           setState(() {
             _valuePieces = val as String;
@@ -657,7 +667,7 @@ late List<Voiture> _chipsList = [
                 decoration: InputDecoration(
                   hintText: 'Appliquez un coupon',
                   hintStyle:
-                  GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
+                      GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
                 ),
                 onSaved: (String? code) {
                   //_codePromo = code!;
@@ -676,20 +686,44 @@ late List<Voiture> _chipsList = [
             width: size.width * 0.3,
             height: 40,
             child: ElevatedButton(
-              onPressed: isLoading ? null : () async {
-                if(voucherController.text != '' && voucherController.text.length == 6) {
-                  //_codePromo = voucherController.text.toUpperCase();
-                  Voucher voucher = await checkVoucher(voucherController.text);
-                  if(voucher.id != 0) {
-                    //printWarning("ACTIVE VOUCHER: $_codePromo");
-                    reduction = voucher.value;
-                    delivery.voucher = voucherController.text;
-                  }
-                  else {
-                    delivery.voucher = voucherController.text = '';
-                  }
-                }
-              },
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (voucherController.text != '' &&
+                          voucherController.text.length == 6) {
+                        //_codePromo = voucherController.text.toUpperCase();
+                        Voucher voucher = await checkVoucher(voucherController.text);
+                        if (voucher.id != 0) {
+                          //printWarning("ACTIVE VOUCHER: $_codePromo");
+                          reduction = voucher.value;
+                          delivery.voucher = voucherController.text;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Coupon validé -${reduction}% de réduction!'),
+                              action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          delivery.voucher = voucherController.text = '';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Ce coupon n'est pas valide!"),
+                              action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 primary: GlobalColors.Orangecolor,
               ),
@@ -748,9 +782,10 @@ late List<Voiture> _chipsList = [
       ),
     );
   }
+
   //////////////////////////////////////////////////////////////
-
-
+  bool _isFormValid = false;
+  bool _isFormBeingValidated = false;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -769,154 +804,183 @@ late List<Voiture> _chipsList = [
       ),
       body: Center(
           child: ListView(
-            children: <Widget>[
-              Container(
-                width: size.width,
-                //height: defaultSize,
-                padding: const EdgeInsets.all(30.0),
-                alignment: Alignment.center,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            width: size.width,
+            //height: defaultSize,
+            padding: const EdgeInsets.all(30.0),
+            alignment: Alignment.center,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 35,
+                  ),
+                  _buildLieuDepart(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  _buildLieuDestination(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
                     children: <Widget>[
+                      _buildDate(),
                       SizedBox(
-                        height: 35,
+                        width: size.width * 0.15,
                       ),
-                      _buildLieuDepart(),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      _buildLieuDestination(),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          _buildDate(),
-                          SizedBox(
-                            width: size.width * 0.15,
-                          ),
-                          _buildHeure()
-                        ],
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          _buildNbreVehicule(),
-                          SizedBox(
-                            width: size.width * 0.15,
-                          ),
-                          _buildTrajet(),
-                        ],
-                      ),
-
-                      SizedBox(
-                        height: 25,
-                      ),
-                      _buildLieuArret(),
-                      SizedBox(
-                        height: 35,
-                      ),
-                      _buildTypeVehicule(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _TypeDeMaison(),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      _NbreDePieces(),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      _buildCodePromo(),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      _buildPersonContact(),
-                      _buildNumero(),
-                      SizedBox(
-                        height: 70,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: 250,
-                          height: 40,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showAlertDialog(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: GlobalColors.Orangecolor,
-                            ),
-                            child: Text(
-                              "VALIDER",
-                              style: TextStyle(
-                                color: GlobalColors.Whitecolor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      _buildHeure()
                     ],
                   ),
-                ),
-              )
-            ],
-          )),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      _buildNbreVehicule(),
+                      SizedBox(
+                        width: size.width * 0.15,
+                      ),
+                      _buildTrajet(),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  _buildLieuArret(),
+                  SizedBox(
+                    height: 35,
+                  ),
+                  _buildTypeVehicule(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _TypeDeMaison(),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  _NbreDePieces(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  _buildCodePromo(),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  _buildPersonContact(),
+                  _buildNumero(),
+                  SizedBox(
+                    height: 70,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 150,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _isFormBeingValidated
+                              ? null
+                              : showAlertDialog(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: GlobalColors.Orangecolor,
+                        ),
+                        child: _isFormBeingValidated
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white)),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('Envoi...',
+                                      style: GoogleFonts.poppins(
+                                          textStyle: TextStyle(
+                                              color: GlobalColors.Whitecolor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.normal)))
+                                ],
+                              )
+                            : Text(
+                                "VALIDER",
+                                style: TextStyle(
+                                  color: GlobalColors.Whitecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      )),
     );
   }
 
   void showAlertDialog(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Remplissez les champs obligatoires"),
-      ));
-    }
-    else {
-      _formKey.currentState!.save();
-      try {
-        //delivery.userId = currentUser.id;
-        //delivery.userEmail = currentUser.email;
-        delivery.contactName = nameController.text;
-        delivery.contactPhone = phoneController.text;
-        delivery.departCity = lieuDepartController.text;
-        delivery.destinationCity = lieuDestinationController.text;
-        delivery.stopCity = lieuStopController.text;
-        await createDelivery(delivery);
-        printWarning("Created");
+    setState(() {
+      _isFormBeingValidated = true;
+    });
+    Future.delayed(Duration(seconds: 2), () async {
+      setState(() {
+        _isFormBeingValidated = false;
+      });
+      if (!_formKey.currentState!.validate()) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Remplissez les champs obligatoires"),
+        ));
+      } else {
+        _formKey.currentState!.save();
+        try {
+          //delivery.userId = currentUser.id;
+          //delivery.userEmail = currentUser.email;
+          delivery.contactName = nameController.text;
+          delivery.contactPhone = phoneController.text;
+          delivery.departCity = lieuDepartController.text;
+          delivery.destinationCity = lieuDestinationController.text;
+          delivery.stopCity = lieuStopController.text;
+          await createDelivery(delivery);
+          printWarning("Created");
 
-        if(isCompleted) {
-          Timer(const Duration(seconds: 0), () {
-            Get.to(HomePage());
-            QuickAlert.show(
-              context: context,
-              text:
-              "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
-              type: QuickAlertType.success,
-              confirmBtnText: "Ok",
-              confirmBtnColor: GlobalColors.bluecolor,
-              onConfirmBtnTap: () {
-                Navigator.pop(context);
-              },
-            );
-          });
+          if (isCompleted) {
+            Timer(const Duration(seconds: 0), () {
+              Get.to(HomePage());
+              QuickAlert.show(
+                context: context,
+                text:
+                    "Merci pour votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+                type: QuickAlertType.success,
+                confirmBtnText: "Ok",
+                confirmBtnColor: GlobalColors.bluecolor,
+                onConfirmBtnTap: () {
+                  Navigator.pop(context);
+                },
+              );
+            });
+          }
+        } catch (error) {
+          printError(error);
         }
+      }
+    });
 
-      }
-      catch(error) {
-        printError(error);
-      }
-    }
     /*if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Remplissez les champs obligatoires"),
@@ -924,8 +988,6 @@ late List<Voiture> _chipsList = [
     }*/
     //else {
     //_formKey.currentState!.save();
-
-
 
     /*print('Details du formulaire transport de colis volumineux');
       print("Lieu d'enlevement: " + _lieuDepart);
@@ -998,37 +1060,34 @@ late List<Voiture> _chipsList = [
 
             ),
           );*/
-          Timer(const Duration(seconds: 2), () {
+          Timer(const Duration(seconds: 0), () {
             Get.to(HomePage());
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Stack(
-                  clipBehavior: Clip.none,
-                  children:[Container(
-                      padding: EdgeInsets.all(10),
-                      height: 100,
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
-                          borderRadius: BorderRadius.all(Radius.circular(20))
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
-                            maxLines: 5,
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+              content: Stack(clipBehavior: Clip.none, children: [
+                Container(
+                    padding: EdgeInsets.all(10),
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Nous vous remercions d'avoir validé votre commande. Le service client de Jojo vous recontactera dans les minutes qui suivent pour une meilleure prise en charge de votre commande.",
+                          maxLines: 5,
+                          style: GoogleFonts.poppins(
+                            textStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ],
-                      )
-                  ),]
-              ),
+                        ),
+                      ],
+                    )),
+              ]),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -1057,8 +1116,8 @@ late List<Voiture> _chipsList = [
         });
   }
 
-
-  Future<Placemark> getAddressFromLatLng(context, double lat, double lng) async {
+  Future<Placemark> getAddressFromLatLng(
+      context, double lat, double lng) async {
     List<Placemark> placeMarks = await placemarkFromCoordinates(lat, lng);
 
     /*for (var element in placeMarks) {
@@ -1072,7 +1131,7 @@ late List<Voiture> _chipsList = [
   Future<void> createDelivery(Delivery delivery) async {
     var isConnected = await checkInternetAccess();
     //if (validate()) {
-    if(isConnected) {
+    if (isConnected) {
       setState(() {
         isLoading = true;
       });
@@ -1080,7 +1139,7 @@ late List<Voiture> _chipsList = [
       try {
         //printWarning("DELIVERY: $delivery");
         var response = await deliveryApi.createDelivery(delivery: delivery);
-        if(response == 201) {
+        if (response == 201) {
           setState(() {
             isCompleted = true;
             isLoading = false;
@@ -1088,15 +1147,13 @@ late List<Voiture> _chipsList = [
           printWarning("DELIVERY CREATED");
         }
         //return delivery;
-      }
-      catch (err) {
+      } catch (err) {
         setState(() {
           isLoading = false;
         });
         printError(err);
       }
-    }
-    else {
+    } else {
       /*showToast(
           fToast: _fToast,
           message: NOT_INTERNET_ACCESS_MESSAGE,
@@ -1112,7 +1169,7 @@ late List<Voiture> _chipsList = [
     //if (validate()) {
     late Voucher voucher = Voucher.init();
     voucher.id = 0;
-    if(isConnected) {
+    if (isConnected) {
       setState(() {
         isLoading = true;
       });
@@ -1124,15 +1181,13 @@ late List<Voiture> _chipsList = [
         setState(() {
           isLoading = false;
         });
-      }
-      catch (err) {
+      } catch (err) {
         setState(() {
           isLoading = false;
         });
         printError(err);
       }
-    }
-    else {
+    } else {
       /*showToast(
           fToast: _fToast,
           message: NOT_INTERNET_ACCESS_MESSAGE,

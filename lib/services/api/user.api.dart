@@ -296,15 +296,13 @@ class UserApi {
   addFakeUser() async {
     final userBox = await Hive.openBox(hiveUserTableName);
     User user = User.init();
-    user.id = 1;
+    user.id = 0;
     user.name = 'config';
     user.phone = 'phone';
     user.email = 'config@jojo.com';
     user.firstName = '';
     user.lastName = '';
     user.country = '';
-    //user.region = '';
-    //user.city = '';
     user.profile = '';
     user.password = '';
     user.accessToken = '';

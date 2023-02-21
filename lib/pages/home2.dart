@@ -1,29 +1,24 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:jojo/pages/courses.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jojo/pages/demenagement.dart';
+import 'package:jojo/pages/demenagement2.dart';
 import 'package:jojo/pages/login.dart';
 import 'package:jojo/pages/profil.dart';
-import 'package:jojo/pages/transportcolis.dart';
+import 'package:jojo/pages/transportcolis2.dart';
 import 'package:jojo/pages/widgets/menu_item.dart' as mw;
-import 'package:jojo/utils/constants.dart';
 import 'package:jojo/utils/global.colors.dart';
 import 'package:jojo/utils/menu.items.dart';
 import 'package:share_plus/share_plus.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage2 extends StatefulWidget {
+  const HomePage2({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage2> createState() => _HomePage2State();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePage2State extends State<HomePage2> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -52,7 +47,7 @@ class _HomePageState extends State<HomePage> {
               PopupMenuButton<mw.MenuItem>(
                 onSelected: (item) => onSelected(context, item),
                 itemBuilder: (context2) => [
-                  ...MenuItems.menuWithConnection.map(buildItem).toList(),
+                  ...MenuItems.menuWithoutConnection.map(buildItem).toList(),
                   //...MenuItems.itemsFirst.fi,
                 ],
               )
@@ -70,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Demenagement();
+                        return Demenagement2();
                       }));
                     },
                     style: ElevatedButton.styleFrom(
@@ -100,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                            return TransportColis();
+                            return TransportColis2();
                           }));
                     },
                     style: ElevatedButton.styleFrom(
@@ -147,22 +142,8 @@ PopupMenuItem<mw.MenuItem> buildItem(mw.MenuItem item) => PopupMenuItem<mw.MenuI
 
 void onSelected(BuildContext context, mw.MenuItem item) {
   switch (item) {
-    case MenuItems.itemCourse:
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return MesCourses();
-      }));
-      break;
-
-    case MenuItems.itemProfil:
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return Profil();
-      }));
-      break;
-
-    case MenuItems.itemConnection:
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return LoginView();
-      }));
+   case MenuItems.itemConnection:
+      Get.off(LoginView());
       break;
 
     case MenuItems.itemShare:

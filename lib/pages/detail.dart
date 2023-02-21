@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jojo/models/delivery/delivery.dart';
 import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'dart:io';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.delivery});
@@ -16,6 +18,8 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   late Delivery delivery;
+  late File pdfFile;
+
   @override
   void initState() {
     super.initState();
@@ -373,6 +377,37 @@ class _DetailPageState extends State<DetailPage> {
                         fontStyle: FontStyle.italic)),
               ),
               SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+              onPressed: () async {
+                pdfFile = await generatePDF();
+                String pdfPath = pdfFile.path;
+                await FlutterDownloader.enqueue(
+                  url: 'file://$pdfPath',
+                  savedDir: '/path/to/download/directory',
+                  fileName: 'commande_${delivery.code}.pdf',
+                  showNotification: true,
+                  openFileFromNotification: true,
+                );
+              },
+              child: Text('Télécharger le PDF'),
+            ),
+              ElevatedButton(
+              onPressed: () async {
+                pdfFile = await generatePDF();
+                String pdfPath = pdfFile.path;
+                await FlutterDownloader.enqueue(
+                  url: 'file://$pdfPath',
+                  savedDir: '/path/to/download/directory',
+                  fileName: 'commande_${delivery.code}.pdf',
+                  showNotification: true,
+                  openFileFromNotification: true,
+                );
+              },
+              child: Text('Télécharger le PDF'),
+            ),
+            SizedBox(
                 height: 30,
               ),
               Row(
@@ -395,4 +430,46 @@ class _DetailPageState extends State<DetailPage> {
       ),
     );
   }
+
+  
+Future<File> generatePDF() async {
+  final pdf = pw.Document();
+  // Add the order details to the PDF
+  pdf.addPage(pw.Page(
+    build: 
+    (pw.Context context) => 
+    pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Header(level: 0, text: 'Détails de la commande ${delivery.code} : ${delivery.transactionType}'),
+        pw.SizedBox(height: 20),
+        pw.Text("Lieu d'enlèvement : ${delivery.departCity}"),
+        pw.Text("Lieu de stop : ${delivery.stopCity}"),
+        pw.Text("Lieu de destination : ${delivery.destinationCity}"),
+        pw.Text("Date : ${delivery.destinationDate}"),
+        pw.Text("Heure : ${delivery.destinationHour}"),
+        pw.Text("Nombre de vehicule : ${delivery.carNumber}"),
+        pw.Text("Nombre de trajet : ${delivery.routeNumber}"),
+        pw.Text("Type de camion : ${delivery.carType}"),
+        pw.Text("Nature colis : ${delivery.naturePackages}"),
+        pw.Text("Poids : ${delivery.weightPackages}"),
+        pw.Text("Liste de colis : ${delivery.packages}"),
+        pw.SizedBox(height: 10),
+        pw.Text("Personne à contacter"),
+        pw.Text("Nom & Prenoms : ${delivery.contactName}"),
+        pw.Text("Contact : ${delivery.contactPhone}"),
+        pw.SizedBox(height: 20),
+      ],
+    ),
+  ));
+
+  // Get the temporary directory to store the PDF file
+  final output = await getTemporaryDirectory();
+  final file = File('${output.path}/commande_${delivery.code}.pdf');
+
+  // Write the PDF file to disk
+  await file.writeAsBytes(await pdf.save());
+
+  return file;
+}
 }

@@ -1,24 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jojo/models/user/user.dart';
 import 'package:jojo/pages/login.dart';
-import 'package:jojo/pages/widgets/signup.form.global.dart';
 import 'package:jojo/services/api/user.api.dart';
 import 'package:jojo/utils/constants.dart';
 import 'package:jojo/utils/functions.dart';
 import 'package:jojo/utils/global.colors.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:jojo/utils/locator.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
-
-
+import 'package:country_flags/country_flags.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:flutter/gestures.dart';
+import 'package:jojo/pages/widgets/policy_dialog.dart';
 
 
 class Inscription extends StatefulWidget {
@@ -42,6 +38,7 @@ class _InscriptionState extends State<Inscription> {
   late String stateValue;
   late String cityValue;
   bool isLoading = false;
+  bool isLoading2 = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
@@ -50,22 +47,34 @@ class _InscriptionState extends State<Inscription> {
   final TextEditingController phoneController = TextEditingController();
   //final TextEditingController countryController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  late String selectedCountryCode;
+  String phoneNumber = '';
+  List<Map<String, String>> countries = [
+    {'name': 'Burkina Faso', 'code': 'BF'},
+    {'name': 'Canada', 'code': 'CA'},
+    {'name': "Côte d'Ivoire", 'code': 'CI'},
+    {'name': 'France', 'code': 'FR'},
+    {'name': 'United States', 'code': 'US'},
+    // Add more countries here
+  ];
+
+  List<String> codes = ['BF', 'CA', 'CI', 'FR', 'US'];
 
   @override
   void initState() {
     super.initState();
-
-    emailController.text = 'sass@jojo.com';
-    firstNameController.text = 'Main';
-    lastNameController.text = 'JOjo';
-    phoneController.text = '070000041';
-    addressController.text = '52 Bd Abdelmoumen';
-    passwordController.text = 'password';
-    confirmPasswordController.text = 'password';
-    countryValue = "Cote D'Ivoire";
-    stateValue = "";
-    cityValue = "";
+    selectedCountryCode = 'CI';
+    emailController.text = '';
+    firstNameController.text = '';
+    lastNameController.text = '';
+    phoneController.text = '';
+    addressController.text = '';
+    passwordController.text = '';
+    confirmPasswordController.text = '';
+    countryValue = "CI";
   }
 
   @override
@@ -75,7 +84,10 @@ class _InscriptionState extends State<Inscription> {
         backgroundColor: GlobalColors.bluecolor,
         centerTitle: true,
         excludeHeaderSemantics: true,
-        title: Text("Inscription",style: GoogleFonts.poppins(),),
+        title: Text(
+          "Inscription",
+          style: GoogleFonts.poppins(),
+        ),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -85,7 +97,37 @@ class _InscriptionState extends State<Inscription> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Column(
+                    children: [
+                      Text(
+                        'BIENVENUE',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                            color: GlobalColors.bluecolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Pour créer votre compte, veuillez remplir les champs ci-dessous avec les informations demandées.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                            color: GlobalColors.bluecolor,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -95,7 +137,13 @@ class _InscriptionState extends State<Inscription> {
                       TextFormField(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: lastNameController,
-                        decoration: InputDecoration(hintText: 'Nom', hintStyle: GoogleFonts.poppins(),),
+                        decoration: InputDecoration(
+                          hintText: 'Nom',
+                          hintStyle: GoogleFonts.poppins(),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2)
+                          )
+                        ),
                         validator: (String? val) {
                           if (val!.isEmpty) {
                             return 'Veuillez saisir votre nom';
@@ -109,7 +157,13 @@ class _InscriptionState extends State<Inscription> {
                       TextFormField(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: firstNameController,
-                        decoration: InputDecoration(hintText: 'Prenom', hintStyle: GoogleFonts.poppins()),
+                        decoration: InputDecoration(
+                            hintText: 'Prenom',
+                            hintStyle: GoogleFonts.poppins(),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2)
+                            )
+                          ),
                         validator: (String? val) {
                           if (val!.isEmpty) {
                             return 'Veuillez saisir votre prénom';
@@ -117,69 +171,107 @@ class _InscriptionState extends State<Inscription> {
                           return null;
                         },
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: 30,
                       ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        controller: addressController,
-                        decoration: InputDecoration(hintText: 'Adresse', hintStyle: GoogleFonts.poppins()),
-                        style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: 16,
+                      SizedBox(
+                        width: 180,
+                        child: DropdownButtonFormField(
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            labelText: 'Pays',
+                            labelStyle: GoogleFonts.poppins(), 
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
+                          
+                          value: selectedCountryCode,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCountryCode = value!;
+                              countryValue = selectedCountryCode;
+                            });
+                          },
+                          items: countries.map((country) {
+                            return DropdownMenuItem(
+                              value: country['code'],
+                              child: SizedBox(
+                                height: 50,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 16,
+                                      child: CountryFlags.flag(country['code']!),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        country['name']!,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          validator: (String? val) {
+                            if (val!.isEmpty) {
+                              return 'Veuillez selectionner votre pays';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (String? val) {
-                          if (val!.isEmpty) {
-                            return 'Veuillez saisir votre adresse';
-                          }
-                          return null;
-                        },
                       ),
                       SizedBox(
-                        height: 5,
-                      ),
-                      CSCPicker(
-                        layout: Layout.vertical,
-                        flagState: CountryFlag.ENABLE,
-                        onCountryChanged: (country) {
-                          setState(() {
-                            countryValue = country;
-                            printWarning(countryValue);
-                          });
-                        },
-                        onStateChanged: (state) {
-                          /*setState(() {
-                            stateValue = state!;
-                            printWarning(stateValue);
-                          });*/
-                        },
-                        onCityChanged: (city) {
-                          /*setState(() {
-                            cityValue = city!;
-                            printWarning(cityValue);
-                          });*/
-                        },
-                        countryDropdownLabel: "Pays",
-                        stateDropdownLabel: "Region",
-                        cityDropdownLabel: "Ville",
-                        currentCountry: countryValue,
+                        height: 30,
                       ),
                       SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(hintText: 'Numero de telephone', hintStyle: GoogleFonts.poppins()),
-                        validator: (String? val) {
-                          if (val!.isEmpty) {
-                            return 'Veuillez saisir votre numéro';
-                          }
-                          return null;
-                        },
+                        width: 300,
+                        height: 40,
+                        child: InternationalPhoneNumberInput(
+                          onInputChanged: (PhoneNumber phoneNumber) {
+                              phoneController.text = phoneNumber.phoneNumber as String;
+                              print(phoneController.text);
+                          },
+
+                          initialValue: PhoneNumber(isoCode: 'CI'),
+                          inputDecoration: InputDecoration(
+                            labelText: 'Numero de telephone',
+                            labelStyle: GoogleFonts.poppins(), 
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          selectorConfig: SelectorConfig(
+                            selectorType: PhoneInputSelectorType.DIALOG
+                      
+                          ),
+                          ignoreBlank: false,
+                          autoValidateMode: AutovalidateMode.disabled,
+                          formatInput: true,
+                          validator: (String? val) {
+                              if (val!.isEmpty) {
+                                return 'Veuillez saisir votre numéro';
+                              }
+                              return null;
+                            },
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
@@ -189,12 +281,18 @@ class _InscriptionState extends State<Inscription> {
                         controller: emailController,
                         obscureText: false,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(hintText: 'Email', hintStyle: GoogleFonts.poppins()),
+                        decoration: InputDecoration(
+                            hintText: 'Email',
+                            hintStyle: GoogleFonts.poppins(),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2)
+                              ),
+                        ),
                         validator: (String? email) {
                           if (email!.isEmpty) {
                             return 'Veuillez saisir votre e-mail';
-                          }
-                          else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}').hasMatch(email)) {
+                          } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}')
+                              .hasMatch(email)) {
                             return "Ceci n'est pas un e-mail valid";
                           }
                           return null;
@@ -210,6 +308,9 @@ class _InscriptionState extends State<Inscription> {
                         decoration: InputDecoration(
                             hintText: 'Mot de passe',
                             hintStyle: GoogleFonts.poppins(),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2)
+                            ),
                             suffixIcon: InkWell(
                               onTap: _togglePasswordView,
                               child: visibility,
@@ -217,8 +318,7 @@ class _InscriptionState extends State<Inscription> {
                         validator: (String? password) {
                           if (password!.isEmpty) {
                             return 'Veuillez saisir votre mot de passe';
-                          }
-                          else if (password.length < 8) {
+                          } else if (password.length < 8) {
                             return "Mot de passe incorrect";
                           }
                           return null;
@@ -234,6 +334,9 @@ class _InscriptionState extends State<Inscription> {
                         decoration: InputDecoration(
                             hintText: 'Repetez le mot de passe',
                             hintStyle: GoogleFonts.poppins(),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: GlobalColors.Orangecolor, width: 2)
+                              ),
                             suffixIcon: InkWell(
                               onTap: _togglePasswordView2,
                               child: visibility2,
@@ -241,12 +344,10 @@ class _InscriptionState extends State<Inscription> {
                         validator: (String? password) {
                           if (password!.isEmpty) {
                             return 'Veuillez saisir à nouveau votre mot de passe';
-                          }
-                          else {
+                          } else {
                             if (password.length < 8) {
                               return "Mot de passe incorrect";
-                            }
-                            else if (password != passwordController.text) {
+                            } else if (password != passwordController.text) {
                               return "Le mot de passe doit être identique";
                             }
                           }
@@ -256,49 +357,84 @@ class _InscriptionState extends State<Inscription> {
                     ],
                   ),
                   const SizedBox(
-                    height: 50,
+                    height: 25,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top:10),
+                    margin: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Checkbox(
-                          value: isChecked,
-                          onChanged: (bool? newValue){
-                            setState(() {
-                              isChecked = newValue!;
-                            });
-                          }
-                        ),
-                        Text(
-                          "j'ai lu et j'accepte la politique de confidentialité",
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                            color: Colors.teal,
-                            fontSize: 12,
-                            ),)
-                        )
+                            value: isChecked,
+                            activeColor: GlobalColors.Orangecolor,
+                            onChanged: (bool? newValue) {
+                              setState(() {
+                                isChecked = newValue!;
+                              });
+                            }),
+                          Text.rich(
+                            TextSpan(
+                                text: "j'ai lu et j'accepte la ",
+                                style: GoogleFonts.poppins(
+                                        textStyle: const TextStyle(
+                                          color: Colors.teal,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                children: [
+                                  TextSpan(
+                                      text: "politique de confidentialité.",
+                                      recognizer: TapGestureRecognizer()
+                                      ..onTap = () =>
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return PolicyDialog(
+                                            mdFileName: 'politique_de_confidentialite.md',
+                                          );
+                                        },),
+                                      style: GoogleFonts.poppins(
+                                        textStyle: const TextStyle(
+                                          color: Colors.teal,
+                                          decoration: TextDecoration.underline,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                  ),
+                                ]),
+                            textAlign: TextAlign.center,
+                          ),
                       ],
                     ),
+                  ),
+                  const SizedBox(
+                    height: 15,
                   ),
                   SizedBox(
                     width: 150,
                     height: 40,
                     child: ElevatedButton(
-                      onPressed: !isChecked ? null : (isLoading ? null : register),
+                      onPressed:
+                          !isChecked ? null : (isLoading ? null : register),
                       style: ElevatedButton.styleFrom(
                         primary: GlobalColors.Orangecolor,
                       ),
-                      child: Text(
-                        "S'inscrire",
-                        style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                          color: GlobalColors.Whitecolor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),)
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white))
+                          : Text("S'inscrire",
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                  color: GlobalColors.Whitecolor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )),
                     ),
                   ),
                 ],
@@ -317,7 +453,7 @@ class _InscriptionState extends State<Inscription> {
     if (isHiddenPassword == true) {
       visibility = const Icon(Icons.visibility_off);
     } else {
-      visibility = const Icon(Icons.visibility);
+      visibility = const Icon(Icons.visibility,);
     }
   }
 
@@ -335,7 +471,7 @@ class _InscriptionState extends State<Inscription> {
   Future register() async {
     var isConnected = await checkInternetAccess();
     if (_formKey.currentState!.validate()) {
-      if(isConnected) {
+      if (isConnected) {
         setState(() {
           //isChecked = false;
           isLoading = true;
@@ -345,37 +481,34 @@ class _InscriptionState extends State<Inscription> {
         user.firstName = firstNameController.text;
         user.lastName = lastNameController.text;
         user.phone = phoneController.text;
-        user.country = countryValue;//countryController.text;
-        //user.region = stateValue;
-        //user.city = cityValue;
+        user.country = countryValue;
         user.password = passwordController.text;
         user.confirmPassword = confirmPasswordController.text;
         user.profile = defaultProfile;
 
         try {
-          printWarning("USER: ${user.email}, ${user.firstName}, ${user.lastName}, ${user.phone}, ${user.country}");
+          printWarning(
+              "USER: ${user.email}, ${user.firstName}, ${user.lastName}, ${user.phone}, ${user.country}");
           var response = await userApi.register(user: user);
           if (response.statusCode == 201) {
             setState(() {
               isLoading = false;
             });
 
-            Timer(const Duration(seconds: 0), () {
+            Timer(const Duration(seconds: 1), () {
               Get.to(LoginView());
-              QuickAlert.show(
+              openDialog(
                 context: context,
-                text:
-                "Nous vous remercions de s'être inscrit sur JOjo. Email vous a été envoyé pour activer votre compte.",
-                type: QuickAlertType.success,
-                confirmBtnText: "Ok",
-                confirmBtnColor: GlobalColors.bluecolor,
-                onConfirmBtnTap: () {
-                  Navigator.pop(context);
+                title: "Validation",
+                message:
+                    "Votre inscription a été prise en compte. Vous recevrez un mail de confirmation dans les minutes qui suivent.",
+                btnText: "Ok",
+                function: () {
+                  Navigator.of(context).pop(false);
                 },
               );
             });
-          }
-          else if (response.statusCode == 401) {
+          } else if (response.statusCode == 401) {
             setState(() {
               isLoading = false;
             });
@@ -384,29 +517,26 @@ class _InscriptionState extends State<Inscription> {
               if (respStr['errors'].containsKey("email")) {
                 //printError(respStr['errors'].containsKey("email"));
                 openDialog(
-                  context: context,
-                  title: "Erreur",
-                  message: "Cet email est déjà utilisé.",
-                  btnText: "Réessayer",
-                  function: () {
-                    Navigator.of(context).pop(false);
-                  }
-                );
+                    context: context,
+                    title: "Erreur",
+                    message: "Cet email est déjà utilisé.",
+                    btnText: "Réessayer",
+                    function: () {
+                      Navigator.of(context).pop(false);
+                    });
               }
             }
             //var rep = jsonDecode(respStr);
             //printError(respStr['errors'].containsKey("email"));
           }
-        }
-        catch (err) {
+        } catch (err) {
           printWarning("0.4");
           setState(() {
             isLoading = false;
           });
           printError(err);
         }
-      }
-      else {
+      } else {
         /*showToast(
             fToast: _fToast,
             message: NOT_INTERNET_ACCESS_MESSAGE,
@@ -417,21 +547,34 @@ class _InscriptionState extends State<Inscription> {
     }
   }
 
-  openDialog({required BuildContext context, required String title, required String message, String btnText = 'Ok', dynamic function}) {
+  openDialog(
+      {required BuildContext context,
+      required String title,
+      required String message,
+      String btnText = 'Ok',
+      dynamic function}) {
     showDialog(
         context: context,
-        builder: (context){
+        builder: (context) {
           return AlertDialog(
-            title:Text(title, style: GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.bold)),) ,
-            content: Text(message, style: GoogleFonts.poppins(),),
+            title: Text(
+              title,
+              style: GoogleFonts.poppins(
+                  textStyle: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            content: Text(
+              message,
+              style: GoogleFonts.poppins(),
+            ),
             actions: [
               TextButton(
                   onPressed: function,
-                  child: Text(btnText, style: GoogleFonts.poppins(),)
-              ),
+                  child: Text(
+                    btnText,
+                    style: GoogleFonts.poppins(),
+                  )),
             ],
           );
-        }
-    );
+        });
   }
 }

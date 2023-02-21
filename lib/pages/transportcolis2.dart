@@ -17,11 +17,12 @@ import 'package:geocoding/geocoding.dart';
 import 'package:jojo/models/voucher/voucher.dart';
 import 'package:jojo/utils/functions.dart';
 
-class TransportColis extends StatefulWidget {
-  const TransportColis({super.key});
+
+class TransportColis2 extends StatefulWidget {
+  const TransportColis2({super.key});
 
   @override
-  State<TransportColis> createState() => _TransportColisState();
+  State<TransportColis2> createState() => _TransportColis2State();
 }
 
 class Voiture {
@@ -30,7 +31,8 @@ class Voiture {
   Voiture(this.label, this.color);
 }
 
-class _TransportColisState extends State<TransportColis> {
+class _TransportColis2State extends State<TransportColis2> {
+
   final DeliveryApi deliveryApi = locator<DeliveryApi>();
 
   bool isLoading = false;
@@ -41,8 +43,7 @@ class _TransportColisState extends State<TransportColis> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController lieuDepartController = TextEditingController();
   final TextEditingController lieuStopController = TextEditingController();
-  final TextEditingController lieuDestinationController =
-      TextEditingController();
+  final TextEditingController lieuDestinationController = TextEditingController();
   final TextEditingController voucherController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController natureController = TextEditingController();
@@ -84,10 +85,11 @@ class _TransportColisState extends State<TransportColis> {
     delivery.stopLng = '';
 
     printInfo("Current3: ${currentUser.id}");
-    if (currentUser.id == 0) {
+    if(currentUser.id == 0) {
       delivery.userId = 0;
       delivery.userEmail = '';
-    } else {
+    }
+    else {
       delivery.userId = currentUser.id;
       delivery.userEmail = currentUser.email;
     }
@@ -140,7 +142,8 @@ class _TransportColisState extends State<TransportColis> {
                 size: 15,
               )
           ),*/
-          labelText: "Lieu d'enlevement"),
+          labelText: "Lieu d'enlevement"
+      ),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de depart est vide';
@@ -191,7 +194,8 @@ class _TransportColisState extends State<TransportColis> {
                 size: 15,
               )
           ),*/
-          labelText: 'Lieu de destination'),
+          labelText: 'Lieu de destination'
+      ),
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'le lieu de destination est vide';
@@ -244,12 +248,14 @@ class _TransportColisState extends State<TransportColis> {
           ),*/
           labelText: "Ajouter un stop en cours de trajet"),
       onSaved: (String? arret) {
-        if (arret == null) {
+        if(arret == null){
           //_lieuArret = 'Pas de stop';
-        } else {
+        }
+        else{
           //_lieuArret = arret;
           //print(_lieuArret);
         }
+
       },
     );
   }
@@ -389,9 +395,9 @@ class _TransportColisState extends State<TransportColis> {
         value: delivery.carNumber.toString(),
         items: _nbreVehicule
             .map((e) => DropdownMenuItem(
-                  child: Text(e),
-                  value: e,
-                ))
+          child: Text(e),
+          value: e,
+        ))
             .toList(),
         onChanged: (val) {
           setState(() {
@@ -425,9 +431,9 @@ class _TransportColisState extends State<TransportColis> {
         value: delivery.routeNumber.toString(),
         items: _nbreTrajet
             .map((e) => DropdownMenuItem(
-                  child: Text(e),
-                  value: e,
-                ))
+          child: Text(e),
+          value: e,
+        ))
             .toList(),
         onChanged: (val) {
           setState(() {
@@ -643,7 +649,7 @@ class _TransportColisState extends State<TransportColis> {
                 decoration: InputDecoration(
                   hintText: 'Appliquez un coupon',
                   hintStyle:
-                      GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
+                  GoogleFonts.poppins(textStyle: TextStyle(fontSize: 10)),
                 ),
                 onSaved: (String? code) {
                   //_codePromo = code!;
@@ -662,44 +668,31 @@ class _TransportColisState extends State<TransportColis> {
             width: size.width * 0.3,
             height: 40,
             child: ElevatedButton(
-              onPressed: isLoading
-                  ? null
-                  : () async {
-                      if (voucherController.text != '' &&
-                          voucherController.text.length == 6) {
-                        //_codePromo = voucherController.text.toUpperCase();
-                        Voucher voucher = await checkVoucher(voucherController.text.toUpperCase());
-                        if (voucher.id != 0) {
-                          //printWarning("ACTIVE VOUCHER: $_codePromo");
-                          reduction = voucher.value;
-                          delivery.voucher = voucherController.text.toUpperCase();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Coupon validé -${reduction}% de réduction!'),
-                              action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          );
-                        } else {
-                          delivery.voucher = voucherController.text = '';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Ce coupon n'est pas valide!"),
-                              action: SnackBarAction(
-                                label: 'OK',
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    },
+              onPressed: isLoading ? null : () async {
+                if(voucherController.text != '' && voucherController.text.length == 6) {
+                  //_codePromo = voucherController.text.toUpperCase();
+                  Voucher voucher = await checkVoucher(voucherController.text.toUpperCase());
+                  if(voucher.id != 0) {
+                    //printWarning("ACTIVE VOUCHER: $_codePromo");
+                    reduction = voucher.value;
+                    delivery.voucher = voucherController.text.toUpperCase();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('coupon validé!'),
+                        action: SnackBarAction(
+                          label: 'OK',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    );
+                  }
+                  else {
+                    delivery.voucher = voucherController.text = '';
+                  }
+                }
+              },
               style: ElevatedButton.styleFrom(
                 primary: GlobalColors.Orangecolor,
               ),
@@ -721,7 +714,7 @@ class _TransportColisState extends State<TransportColis> {
 
 //////////////////////////Personne à contacter////////////////////////
   late final String _nomPrenom;
-  Widget _buildPersonContact() {
+  Widget _buildPersonContact(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -733,8 +726,7 @@ class _TransportColisState extends State<TransportColis> {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: nameController,
           decoration: InputDecoration(
-            hintText: /*currentUser != null ? currentUser.name :*/
-                'Nom & prenoms',
+            hintText: /*currentUser != null ? currentUser.name :*/ 'Nom & prenoms',
             hintStyle: GoogleFonts.poppins(),
           ),
           validator: (String? nom) {
@@ -797,10 +789,11 @@ class _TransportColisState extends State<TransportColis> {
       ),
     );
   }
-  //////////////////////////////////////////////////////////////bool _isFormValid = false;
-
+  //////////////////////////////////////////////////////////////
+  ///
   bool _isFormValid = false;
   bool _isFormBeingValidated = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -881,10 +874,10 @@ class _TransportColisState extends State<TransportColis> {
                   SizedBox(
                     height: 25,
                   ),
-                  _buildCodePromo(),
+                  /*_buildCodePromo(),
                   SizedBox(
                     height: 40,
-                  ),
+                  ),*/
                   _buildPersonContact(),
                   _buildNumero(),
                   SizedBox(
@@ -906,7 +899,6 @@ class _TransportColisState extends State<TransportColis> {
                         ),
                         child: _isFormBeingValidated
                             ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   SizedBox(
@@ -921,7 +913,7 @@ class _TransportColisState extends State<TransportColis> {
                                       style: GoogleFonts.poppins(
                                           textStyle: TextStyle(
                                               color: GlobalColors.Whitecolor,
-                                              fontSize: 14,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               fontStyle: FontStyle.normal)))
                                 ],
@@ -983,14 +975,7 @@ class _TransportColisState extends State<TransportColis> {
 
         if (isCompleted) {
           Timer(const Duration(seconds: 0), () {
-            /*if (currentUser.id == 0) {
-              Get.to(const HomePage2());
-            }
-            else {
-              Get.to(currentUser.id == 0 ? HomePage2() : HomePage());
-            }*/
-            //Get.to(currentUser.id == 0 ? const HomePage2() : const HomePage());
-            Get.to(HomePage());
+            Get.to(HomePage2());
             QuickAlert.show(
               context: context,
               text:
@@ -1021,8 +1006,7 @@ class _TransportColisState extends State<TransportColis> {
     //}
   }
 
-  Future<Placemark> getAddressFromLatLng(
-      context, double lat, double lng) async {
+  Future<Placemark> getAddressFromLatLng(context, double lat, double lng) async {
     List<Placemark> placeMarks = await placemarkFromCoordinates(lat, lng);
 
     /*for (var element in placeMarks) {
@@ -1036,30 +1020,31 @@ class _TransportColisState extends State<TransportColis> {
   Future<void> createDelivery(Delivery delivery) async {
     var isConnected = await checkInternetAccess();
     //if (validate()) {
-    if (isConnected) {
+    if(isConnected) {
       setState(() {
         isLoading = true;
       });
 
       try {
         //printWarning("DELIVERY: $delivery");
-        var response =
-            await deliveryApi.createDeliveryPackage(delivery: delivery);
-        if (response == 201) {
+        var response = await deliveryApi.createDeliveryPackage(delivery: delivery);
+        if(response == 201) {
           setState(() {
             isCompleted = true;
             isLoading = false;
           });
           printWarning("DELIVERY CREATED");
         }
-      } catch (err) {
+      }
+      catch (err) {
         setState(() {
           isLoading = false;
         });
         //printError(err);
         printError("Error1: $err");
       }
-    } else {
+    }
+    else {
       /*showToast(
           fToast: _fToast,
           message: NOT_INTERNET_ACCESS_MESSAGE,
@@ -1075,7 +1060,7 @@ class _TransportColisState extends State<TransportColis> {
     //if (validate()) {
     late Voucher voucher = Voucher.init();
     voucher.id = 0;
-    if (isConnected) {
+    if(isConnected) {
       setState(() {
         isLoading = true;
       });
@@ -1087,13 +1072,15 @@ class _TransportColisState extends State<TransportColis> {
         setState(() {
           isLoading = false;
         });
-      } catch (err) {
+      }
+      catch (err) {
         setState(() {
           isLoading = false;
         });
         printError(err);
       }
-    } else {
+    }
+    else {
       /*showToast(
           fToast: _fToast,
           message: NOT_INTERNET_ACCESS_MESSAGE,
